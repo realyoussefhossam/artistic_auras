@@ -4,15 +4,15 @@
 
 **Goal:** Build, test, and launch the 21-token Artistic Auras ERC-721 NFT collection on Ethereum mainnet, including metadata cleanup, smart contract, Next.js minting site, and testnet-to-mainnet deployment.
 
-**Architecture:** Foundry-managed Solidity contract using OpenZeppelin v4.9.6 ERC-721 + Python cleanup scripts for the existing CSV/image assets + Next.js 14 App Router frontend with RainbowKit/wagmi + IPFS metadata pinning via Pinata.
+**Architecture:** Foundry-managed Solidity contract using OpenZeppelin v5.x ERC-721Royalty + Python cleanup scripts for the existing CSV/image assets + Next.js 14 App Router frontend with RainbowKit/wagmi + IPFS metadata pinning via Pinata.
 
-**Tech Stack:** Solidity ^0.8.20, Foundry, OpenZeppelin Contracts v4.9.6, Python 3, pytest, Next.js 14, TypeScript, Tailwind CSS, shadcn/ui, RainbowKit v2, wagmi v2, viem.
+**Tech Stack:** Solidity ^0.8.20, Foundry, OpenZeppelin Contracts v5.x, Python 3, pytest, Next.js 14, TypeScript, Tailwind CSS, shadcn/ui, RainbowKit v2, wagmi v2, viem.
 
 ## Global Constraints
 
 - Blockchain: Ethereum mainnet
 - Testnet: Sepolia
-- Contract standard: OpenZeppelin ERC-721 (with `Ownable`, `Pausable`, `ERC2981`)
+- Contract standard: OpenZeppelin ERC-721Royalty + `Ownable` + `Pausable` (v5.x)
 - Total supply: 21 (fixed, token IDs taken from `metadata-Files.csv`)
 - Mint model: fixed-price public sale
 - Mint price: `1 ether / 21` per token (≈0.04762 ETH)
@@ -97,10 +97,10 @@ web/.env.local
 Run:
 
 ```bash
-forge install OpenZeppelin/openzeppelin-contracts@v4.9.6
+forge install OpenZeppelin/openzeppelin-contracts
 ```
 
-This adds the library under `lib/openzeppelin-contracts` and updates `.gitmodules`. Foundry will not auto-commit unless you pass `--commit`.
+This adds the latest OpenZeppelin v5.x library under `lib/openzeppelin-contracts` and updates `.gitmodules`. Foundry will not auto-commit unless you pass `--commit`.
 
 - [ ] **Step 4: Add Python dependencies**
 
@@ -392,6 +392,7 @@ pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
 import "../src/ArtisticAuras.sol";
+import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 
 contract ArtisticAurasTest is Test {
     ArtisticAuras public nft;
@@ -441,13 +442,12 @@ Create `src/ArtisticAuras.sol`:
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import {ERC721Royalty} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Royalty.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {Pausable} from "@openzeppelin/contracts/security/Pausable.sol";
-import {ERC2981} from "@openzeppelin/contracts/token/common/ERC2981.sol";
+import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
-contract ArtisticAuras is ERC721, Ownable, Pausable, ERC2981 {
+contract ArtisticAuras is ERC721Royalty, Ownable, Pausable {
     using Strings for uint256;
 
     uint256 public constant MAX_SUPPLY = 21;
@@ -467,8 +467,7 @@ contract ArtisticAuras is ERC721, Ownable, Pausable, ERC2981 {
         address initialOwner,
         uint256[21] memory _tokenIds,
         string memory baseURI
-    ) ERC721("ArtisticAuras", "AURA") Ownable() {
-        _transferOwnership(initialOwner);
+    ) ERC721("ArtisticAuras", "AURA") Ownable(initialOwner) {
         tokenIds = _tokenIds;
         _baseTokenURI = baseURI;
         mintPrice = 1 ether / 21;
@@ -508,22 +507,21 @@ contract ArtisticAuras is ERC721, Ownable, Pausable, ERC2981 {
         require(success, "Withdraw failed");
     }
 
+    function pause() public onlyOwner {
+        _pause();
+    }
+
+    function unpause() public onlyOwner {
+        _unpause();
+    }
+
     function _baseURI() internal view override returns (string memory) {
         return _baseTokenURI;
     }
 
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
-        _requireMinted(tokenId);
+        _requireOwned(tokenId);
         return string(abi.encodePacked(_baseURI(), tokenId.toString(), ".json"));
-    }
-
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(ERC721, ERC2981)
-        returns (bool)
-    {
-        return super.supportsInterface(interfaceId);
     }
 }
 ```
@@ -552,7 +550,7 @@ Append to `test/ArtisticAuras.t.sol`:
         vm.prank(owner);
         nft.pause();
         vm.prank(minter);
-        vm.expectRevert("Pausable: paused");
+        vm.expectRevert(Pausable.EnforcedPause.selector);
         nft.mint{value: nft.mintPrice()}(1);
     }
 

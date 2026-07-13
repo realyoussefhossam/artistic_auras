@@ -44,7 +44,7 @@ The CSV and image files need minor cleanup before they can be used reliably by a
 |-------------|----------|
 | Blockchain | Ethereum mainnet |
 | Testnet | Sepolia |
-| Contract standard | OpenZeppelin ERC-721 |
+| Contract standard | OpenZeppelin ERC-721 (v5.x) |
 | Framework | Foundry |
 | Total supply | 21 (fixed) |
 | Mint model | Fixed-price public sale |
@@ -132,7 +132,7 @@ Generate one JSON file per token in `metadata/<token-id>.json`:
 
 ### 7.1 Dependencies
 
-- `openzeppelin-contracts` ERC-721, Ownable, Pausable, ERC-2981.
+- `openzeppelin-contracts` v5.x: `ERC721Royalty`, `Ownable`, `Pausable`.
 - Foundry for compilation, testing, and deployment scripts.
 - Solidity `^0.8.20`.
 
@@ -173,7 +173,7 @@ uint256 public nextTokenIndex;   // index into tokenIds for the next mint
 
 ### 7.6 Royalties
 
-Implement OpenZeppelin `ERC2981`. `royaltyInfo(tokenId, salePrice)` returns `(owner(), 500)` (5%). Token IDs are ignored because the royalty is collection-wide.
+Use OpenZeppelin `ERC721Royalty` (which includes ERC-2981). `royaltyInfo(tokenId, salePrice)` returns `(owner(), 500)` (5%). Token IDs are ignored because the royalty is collection-wide.
 
 ### 7.7 Errors
 
@@ -186,7 +186,7 @@ error InvalidQuantity();
 
 ### 7.8 Token URI
 
-`_baseURI()` returns the IPFS folder CID. `tokenURI(tokenId)` returns `string(abi.encodePacked(_baseURI(), tokenId.toString(), ".json"))` so each metadata file is resolved as `<cid>/<token-id>.json`.
+`_baseURI()` returns the IPFS folder CID. `tokenURI(tokenId)` calls `_requireOwned(tokenId)` and returns `string(abi.encodePacked(_baseURI(), tokenId.toString(), ".json"))` so each metadata file is resolved as `<cid>/<token-id>.json`.
 
 ---
 
