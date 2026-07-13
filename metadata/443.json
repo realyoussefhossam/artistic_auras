@@ -1,0 +1,35 @@
+{
+  "name": "Artistic-Auras #443",
+  "description": "A glowing white core at the center radiates spiraling streams of fiery orange and black energy. Tendrils intertwine with dripping textures, creating a vivid and dynamic representation of cosmic energy in motion",
+  "image": "ipfs://QmVKZ3RASrxsDrjUUfHFyA4WczEpppBW8cAD6kqcEbynkA",
+  "attributes": [
+    {
+      "trait_type": "Color Scheme",
+      "value": "Bright White, Fiery Orange, Deep Black, Subtle Beige"
+    },
+    {
+      "trait_type": "Energy Source",
+      "value": "Central Luminous Core"
+    },
+    {
+      "trait_type": "Element",
+      "value": "Radiating Tendrils, Dripping Energy, Intertwined Flows"
+    },
+    {
+      "trait_type": "Form",
+      "value": "Central Spiral, Radiating Patterns, Dripping Extensions"
+    },
+    {
+      "trait_type": "Mood",
+      "value": "Intense, Dynamic, Energetic"
+    },
+    {
+      "trait_type": "Theme",
+      "value": "Creation and Chaos, Cosmic Energy, Infinite Expansion"
+    },
+    {
+      "trait_type": "Movement",
+      "value": "Spiraling Outward, Radiant Expansion, Gravitational Drips"
+    }
+  ]
+}

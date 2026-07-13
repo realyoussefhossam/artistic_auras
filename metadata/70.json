@@ -1,0 +1,35 @@
+{
+  "name": "Artistic-Auras #70",
+  "description": "An intricate surreal representation of a tree-like figure intertwined with mechanical elements, symbolizing the fusion of life and technology. The central figure resembles a robotic character with a glowing orb in the chest, encased in a network of spheres, branches, and wires. The branches extend outward, each holding circular elements that represent celestial bodies or orbs. The background showcases a soft transition of light, evoking an ethereal cosmic landscape. Birds made of dark geometric shapes soar in the distance, adding a contrast between the organic and mechanical themes.",
+  "image": "ipfs://Qmb3TxBsNaKcR3K5VewUkMFE5G2LTKvaHnuv4yoySFWPh2",
+  "attributes": [
+    {
+      "trait_type": "Color Scheme",
+      "value": "Teal, Orange, Blue, Black, Yellow"
+    },
+    {
+      "trait_type": "Energy Source",
+      "value": "Tree, Robot, Orbs, Birds, Celestial Bodies"
+    },
+    {
+      "trait_type": "Element",
+      "value": "Mechanical Forms, Organic Branches, Energy Spheres"
+    },
+    {
+      "trait_type": "Form",
+      "value": "Geometric, Branching, Circular Orbs"
+    },
+    {
+      "trait_type": "Mood",
+      "value": "Reflective, Mystical, Futuristic"
+    },
+    {
+      "trait_type": "Theme",
+      "value": "Fusion of Nature and Technology, Cosmic Life Force, Evolution of Life"
+    },
+    {
+      "trait_type": "Movement",
+      "value": "Abstract Futurism, Surreal Technology"
+    }
+  ]
+}

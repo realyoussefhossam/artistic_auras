@@ -1,0 +1,35 @@
+{
+  "name": "Artistic-Auras #6",
+  "description": "An abstract representation of cosmic birth, capturing the dynamic eruption of energy and life. A fiery orb at the center radiates explosive forces, sending waves of energy into space, intertwined with branching tendrils that evoke organic growth. The swirling colors of red, yellow, and orange dominate the composition, symbolizing the intense power of creation, while distant celestial orbs highlight the vast, interconnected nature of the universe. The piece evokes both chaos and harmony, illustrating the cycle of destruction and creation.",
+  "image": "ipfs://QmWK6YNnU7DzY12vAXMZ8QFCjNHfkAzkedmgmfDa8qDkjP",
+  "attributes": [
+    {
+      "trait_type": "Color Scheme",
+      "value": "Red, Yellow, Orange, Black, Blue"
+    },
+    {
+      "trait_type": "Energy Source",
+      "value": "Fiery Orb"
+    },
+    {
+      "trait_type": "Element",
+      "value": "Cosmic Tendrils"
+    },
+    {
+      "trait_type": "Form",
+      "value": "Organic Energy Flow"
+    },
+    {
+      "trait_type": "Mood",
+      "value": "Fiery, Explosive, Creation"
+    },
+    {
+      "trait_type": "Theme",
+      "value": "Cosmic Birth, Energy, Creation"
+    },
+    {
+      "trait_type": "Movement",
+      "value": "Abstract Expressionism"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "name": "Artistic-Auras #67",
+  "description": "This abstract artwork captures the contrast between organic and geometric forms, portraying a brilliant sun radiating fiery energy across the canvas. A powerful lightning-like force extends from the sun, connecting with an explosion of dark red and blue spheres that are tangled in branching black tendrils. On the right side, a series of light blue geometric shapes appear to float, giving a sense of balance against the chaotic energy. The background features a gradient of warm oranges and cool grays, symbolizing the duality of opposing forces in the cosmos.",
+  "image": "ipfs://QmcHb81wZefNrqGBjx3rTBzkUDqPPWJm4GtPJ3e4hb6ntT",
+  "attributes": [
+    {
+      "trait_type": "Color Scheme",
+      "value": "Orange, Yellow, Red, Black, Blue, White, Gray"
+    },
+    {
+      "trait_type": "Energy Source",
+      "value": "Sun, Energy, Spheres, Geometric Shapes, Lightning"
+    },
+    {
+      "trait_type": "Element",
+      "value": "Celestial Power, Energy Flow, Geometric Forms"
+    },
+    {
+      "trait_type": "Form",
+      "value": "Organic vs Geometric, Radiating Energy"
+    },
+    {
+      "trait_type": "Mood",
+      "value": "Dynamic, Chaotic, Balanced"
+    },
+    {
+      "trait_type": "Theme",
+      "value": "Cosmic Forces, Energy and Form, Chaos and Order"
+    },
+    {
+      "trait_type": "Movement",
+      "value": "Abstract Cosmic Art, Surrealist Dualism"
+    }
+  ]
+}

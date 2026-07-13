@@ -1,0 +1,35 @@
+{
+  "name": "Artistic-Auras #31",
+  "description": "An abstract cosmic composition centered around a radiant orb, symbolizing the convergence of elemental and celestial forces. Encircling the central sun-like figure are symmetrical patterns of fiery petals and glowing orbs, creating a balance between fire, light, and the organic flow of cosmic energy. The artwork is a dynamic fusion of warm oranges, deep blues, and contrasting whites, with branching tendrils extending outward, suggesting both growth and the interconnectedness of cosmic realms. Mysterious symbols and geometric elements enhance the mystical and celestial nature of the piece.",
+  "image": "ipfs://QmagsTnfGgCkHrffWozeB6in6EghHBSLZVdEL8FXWJbw95",
+  "attributes": [
+    {
+      "trait_type": "Color Scheme",
+      "value": "Orange, Yellow, Blue, Black, White"
+    },
+    {
+      "trait_type": "Energy Source",
+      "value": "Central Sun"
+    },
+    {
+      "trait_type": "Element",
+      "value": "Fiery Petals, Celestial Orbs, Cosmic Tendrils"
+    },
+    {
+      "trait_type": "Form",
+      "value": "Symmetrical Pattern, Radiating Energy"
+    },
+    {
+      "trait_type": "Mood",
+      "value": "Mystical, Cosmic, Balanced"
+    },
+    {
+      "trait_type": "Theme",
+      "value": "Cosmic Balance, Elemental Forces, Mysticism"
+    },
+    {
+      "trait_type": "Movement",
+      "value": "Abstract Expressionism, Surrealism"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "name": "Artistic-Auras #178",
+  "description": "This abstract artwork showcases a central burst of vivid colors, evoking the imagery of an explosion or energy surge. The composition blends warm hues like fiery reds, oranges, and yellows with cooler tones such as black, teal, and beige. The jagged lines and erratic splashes of paint give a sense of chaos and intensity. The soft, diffused background contrasts with the vibrant energy of the central explosion, creating a striking visual balance.",
+  "image": "ipfs://QmTRbVBbn4zE1e4TV711PBRTV5VDNtB4FSqBrn1PYzFjPL",
+  "attributes": [
+    {
+      "trait_type": "Color Scheme",
+      "value": "Warm oranges, reds, and yellows contrasted with blacks, beige, and muted teal"
+    },
+    {
+      "trait_type": "Energy Source",
+      "value": "Energy Explosion, Abstract Form"
+    },
+    {
+      "trait_type": "Element",
+      "value": "Central burst of color, erratic and jagged lines, diffused edges"
+    },
+    {
+      "trait_type": "Form",
+      "value": "Organic, chaotic structure with energetic splatters and flowing strokes"
+    },
+    {
+      "trait_type": "Mood",
+      "value": "Intense, Dynamic, Chaotic"
+    },
+    {
+      "trait_type": "Theme",
+      "value": "Energy, Explosion, Creation, Chaos"
+    },
+    {
+      "trait_type": "Movement",
+      "value": "Abstract Expressionism"
+    }
+  ]
+}

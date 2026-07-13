@@ -1,0 +1,35 @@
+{
+  "name": "Artistic-Auras #35",
+  "description": "An abstract and surreal representation of the fusion between cosmic forces and geometric structures. The composition is centered around a radiant orb, with tendrils of energy and branches of dark matter connecting vibrant spherical planets and sharp, crystalline geometric shapes. The swirling energy flows through a palette of fiery oranges and yellows, while cool blues and intricate black lines add contrast and depth. This artwork reflects the balance between chaos and order, the organic and the structured, suggesting the underlying geometry that governs the universe.",
+  "image": "ipfs://Qmf2zhNyuDCzg9F6a5JW9rtyYhMTWSfkWj9DDKLkgAmGmR",
+  "attributes": [
+    {
+      "trait_type": "Color Scheme",
+      "value": "Orange, Yellow, Black, Blue"
+    },
+    {
+      "trait_type": "Energy Source",
+      "value": "Radiant Orb"
+    },
+    {
+      "trait_type": "Element",
+      "value": "Geometric Shapes, Planets, Cosmic Tendrils"
+    },
+    {
+      "trait_type": "Form",
+      "value": "Circular Orbs, Geometric Figures"
+    },
+    {
+      "trait_type": "Mood",
+      "value": "Dynamic, Structured, Cosmic"
+    },
+    {
+      "trait_type": "Theme",
+      "value": "Cosmic Geometry, Balance of Chaos and Order, Universal Forces"
+    },
+    {
+      "trait_type": "Movement",
+      "value": "Abstract Expressionism, Geometric Surrealism"
+    }
+  ]
+}

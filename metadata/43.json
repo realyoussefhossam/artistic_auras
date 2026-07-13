@@ -1,0 +1,35 @@
+{
+  "name": "Artistic-Auras #43",
+  "description": "An abstract composition blending organic shapes with geometric forms, highlighting vibrant, glowing orbs and polyhedral structures. The artwork features spheres, pyramids, and cubes in fiery orange and cool blue tones, surrounded by dark, vein-like roots. A radiant sun-like orb in the top left corner emanates light, while the other elements flow outward, representing the interplay of geometry and organic matter. The art conveys the idea of energy flow, creation, and cosmic order with a mix of natural and mathematical forms.",
+  "image": "ipfs://QmetZgUdsPyBUcoNXqwPdkCy8EVRuyGjsMbSqKQftR1y9m",
+  "attributes": [
+    {
+      "trait_type": "Color Scheme",
+      "value": "Fiery Oranges, Cool Blues, Dark Blacks, Warm Yellows"
+    },
+    {
+      "trait_type": "Energy Source",
+      "value": "Radiant Sun-like Orb"
+    },
+    {
+      "trait_type": "Element",
+      "value": "Geometric Shapes (Spheres, Polyhedrons, Cubes)"
+    },
+    {
+      "trait_type": "Form",
+      "value": "Organic and Angular Forms"
+    },
+    {
+      "trait_type": "Mood",
+      "value": "Dynamic, Cosmic, Creative"
+    },
+    {
+      "trait_type": "Theme",
+      "value": "Cosmic Geometry, Energy Flow, Universal Balance"
+    },
+    {
+      "trait_type": "Movement",
+      "value": "Abstract Surrealism"
+    }
+  ]
+}

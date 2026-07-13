@@ -1,0 +1,35 @@
+{
+  "name": "Artistic-Auras #8",
+  "description": "An abstract depiction of cosmic energy streams converging beneath a radiant celestial orb. Vibrant waves of blue, red, and golden hues flow from the center of the composition, symbolizing the interconnectedness of celestial forces. The central orb, reminiscent of a sun or planetary core, casts light and energy into the surrounding space. The piece evokes movement, creation, and cosmic balance, with organic, flowing forms representing the perpetual flow of energy across the universe.",
+  "image": "ipfs://QmXL6rbv4h7kFjBSCqAkpYMTSqvtVjiLAGTTc31rosxFn1",
+  "attributes": [
+    {
+      "trait_type": "Color Scheme",
+      "value": "Blue, Red, Yellow, Gold, Orange"
+    },
+    {
+      "trait_type": "Energy Source",
+      "value": "Celestial Orb"
+    },
+    {
+      "trait_type": "Element",
+      "value": "Cosmic Energy Streams"
+    },
+    {
+      "trait_type": "Form",
+      "value": "Flowing, Organic Tendrils"
+    },
+    {
+      "trait_type": "Mood",
+      "value": "Dynamic, Energetic, Mystical"
+    },
+    {
+      "trait_type": "Theme",
+      "value": "Cosmic Flow, Energy, Creation"
+    },
+    {
+      "trait_type": "Movement",
+      "value": "Abstract Expressionism"
+    }
+  ]
+}
