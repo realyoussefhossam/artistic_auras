@@ -17,7 +17,7 @@ contract ArtisticAuras is ERC721URIStorage, Ownable {
     // Event emitted when a new NFT is minted
     event NFTMinted(address indexed to, uint256 indexed _tokenId, string tokenURI);
 
-    constructor() ERC721("Artistic Auras", "AA") Ownable(msg.sender) {}
+    constructor() ERC721("Artistic Auras", "AURA") Ownable(msg.sender) {}
 
     function mint(string memory tokenURI) external payable {
         require(msg.value >= MINT_PRICE, "Insufficient payment");
