@@ -2,10 +2,11 @@
 pragma solidity ^0.8.27;
 
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import {ERC721Pausable} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
-contract ArtisticAuras is ERC721, Ownable {
+contract ArtisticAuras is ERC721, ERC721Pausable, Ownable {
     using Strings for uint256;
 
     uint256 private _tokenIds;
@@ -15,6 +16,7 @@ contract ArtisticAuras is ERC721, Ownable {
 
     mapping(address => uint256) public mintedCount;
     uint256 public maxMintPerAddress = 1;
+    bool public publicSaleActive;
 
     string private _baseTokenURI;
 
@@ -24,7 +26,12 @@ contract ArtisticAuras is ERC721, Ownable {
         _baseTokenURI = baseURI;
     }
 
-    function mint(uint256 quantity) external payable {
+    modifier whenPublicSaleActive() {
+        require(publicSaleActive, "Public sale is not active");
+        _;
+    }
+
+    function mint(uint256 quantity) external payable whenNotPaused whenPublicSaleActive {
         require(msg.value >= MINT_PRICE * quantity, "Insufficient payment");
         require(_tokenIds + quantity <= MAX_SUPPLY, "Max supply reached");
         require(mintedCount[msg.sender] + quantity <= maxMintPerAddress, "Max mint per address reached");
@@ -56,6 +63,18 @@ contract ArtisticAuras is ERC721, Ownable {
         maxMintPerAddress = newMaxMint;
     }
 
+    function setPublicSaleActive(bool active) external onlyOwner {
+        publicSaleActive = active;
+    }
+
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
+    }
+
     function withdraw() external onlyOwner {
         uint256 balance = address(this).balance;
         require(balance > 0, "No funds to withdraw");
@@ -72,8 +91,16 @@ contract ArtisticAuras is ERC721, Ownable {
         return _baseTokenURI;
     }
 
-    function tokenURI(uint256 tokenId) public view override returns (string memory) {
+    function tokenURI(uint256 tokenId) public view override(ERC721) returns (string memory) {
         _requireOwned(tokenId);
         return string(abi.encodePacked(_baseURI(), tokenId.toString(), ".json"));
+    }
+
+    function _update(address to, uint256 tokenId, address auth)
+        internal
+        override(ERC721, ERC721Pausable)
+        returns (address)
+    {
+        return super._update(to, tokenId, auth);
     }
 }

@@ -26,6 +26,11 @@ contract ArtisticAurasTest is Test {
         vm.stopPrank();
     }
 
+    function _enableSale() internal {
+        vm.prank(owner);
+        artisticAuras.setPublicSaleActive(true);
+    }
+
     function test_Constructor() public view {
         assertEq(artisticAuras.name(), "Artistic Auras");
         assertEq(artisticAuras.symbol(), "AURA");
@@ -33,9 +38,12 @@ contract ArtisticAurasTest is Test {
         assertEq(artisticAuras.MAX_SUPPLY(), MAX_SUPPLY);
         assertEq(artisticAuras.MINT_PRICE(), MINT_PRICE);
         assertEq(artisticAuras.maxMintPerAddress(), 1);
+        assertEq(artisticAuras.publicSaleActive(), false);
+        assertEq(artisticAuras.paused(), false);
     }
 
     function test_Mint() public {
+        _enableSale();
         vm.deal(user1, MINT_PRICE);
 
         vm.startPrank(user1);
@@ -52,6 +60,7 @@ contract ArtisticAurasTest is Test {
     }
 
     function test_MintRevertsWithInsufficientPayment() public {
+        _enableSale();
         vm.deal(user1, MINT_PRICE);
 
         vm.startPrank(user1);
@@ -61,12 +70,81 @@ contract ArtisticAurasTest is Test {
     }
 
     function test_MintRevertsWhenMaxMintPerAddressReached() public {
+        _enableSale();
         vm.deal(user1, MINT_PRICE * 2);
 
         vm.startPrank(user1);
         artisticAuras.mint{value: MINT_PRICE}(1);
         vm.expectRevert("Max mint per address reached");
         artisticAuras.mint{value: MINT_PRICE}(1);
+        vm.stopPrank();
+    }
+
+    function test_MintRevertsWhenSaleNotActive() public {
+        vm.deal(user1, MINT_PRICE);
+
+        vm.startPrank(user1);
+        vm.expectRevert("Public sale is not active");
+        artisticAuras.mint{value: MINT_PRICE}(1);
+        vm.stopPrank();
+    }
+
+    function test_MintRevertsWhenPaused() public {
+        _enableSale();
+        vm.deal(user1, MINT_PRICE);
+
+        vm.prank(owner);
+        artisticAuras.pause();
+
+        vm.startPrank(user1);
+        vm.expectRevert(abi.encodeWithSignature("EnforcedPause()"));
+        artisticAuras.mint{value: MINT_PRICE}(1);
+        vm.stopPrank();
+    }
+
+    function test_TransferRevertsWhenPaused() public {
+        _enableSale();
+        vm.deal(user1, MINT_PRICE);
+
+        vm.prank(user1);
+        artisticAuras.mint{value: MINT_PRICE}(1);
+
+        vm.prank(owner);
+        artisticAuras.pause();
+
+        vm.prank(user1);
+        vm.expectRevert(abi.encodeWithSignature("EnforcedPause()"));
+        artisticAuras.transferFrom(user1, user2, 1);
+    }
+
+    function test_PauseAndUnpause() public {
+        _enableSale();
+        vm.deal(user1, MINT_PRICE);
+
+        vm.prank(owner);
+        artisticAuras.pause();
+        assertEq(artisticAuras.paused(), true);
+
+        vm.prank(owner);
+        artisticAuras.unpause();
+        assertEq(artisticAuras.paused(), false);
+
+        vm.prank(user1);
+        artisticAuras.mint{value: MINT_PRICE}(1);
+        assertEq(artisticAuras.ownerOf(1), user1);
+    }
+
+    function test_NonOwnerCannotPause() public {
+        vm.startPrank(user1);
+        vm.expectRevert();
+        artisticAuras.pause();
+        vm.stopPrank();
+    }
+
+    function test_NonOwnerCannotToggleSale() public {
+        vm.startPrank(user1);
+        vm.expectRevert();
+        artisticAuras.setPublicSaleActive(true);
         vm.stopPrank();
     }
 
@@ -87,6 +165,7 @@ contract ArtisticAurasTest is Test {
     }
 
     function test_Withdraw() public {
+        _enableSale();
         vm.deal(user1, MINT_PRICE);
         vm.prank(user1);
         artisticAuras.mint{value: MINT_PRICE}(1);
