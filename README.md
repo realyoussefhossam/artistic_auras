@@ -35,7 +35,7 @@ python3 -m pip install -r scripts/requirements.txt
 python3 scripts/cleanup_metadata.py
 ```
 
-This generates `metadata/*.json`, `out/token_ids.json`, `out/tokens.json`, and renames the artwork files to lowercase `.png`.
+This generates `metadata/*.json` as sequential `1.json`–`21.json`, `out/token_ids.json`, `out/tokens.json`, and renames the artwork files to lowercase `.png`.
 
 ### 4. Build and test the contract
 
@@ -51,15 +51,15 @@ Copy `.env.example` to `.env` and fill in your values, then:
 ```bash
 # Sepolia testnet
 source .env
-forge script script/Deploy.s.sol --rpc-url sepolia --broadcast --verify -vvv
+forge script script/Deploy.s.sol --rpc-url sepolia --broadcast --verify --account deployer -vvv
 
 # Mainnet
-forge script script/Deploy.s.sol --rpc-url mainnet --broadcast --verify -vvv
+forge script script/Deploy.s.sol --rpc-url mainnet --broadcast --verify --account deployer -vvv
 ```
 
 ## Environment Variables
 
-See `.env.example` for the required RPC endpoints, Etherscan API key, deployer key, and Pinata JWT.
+See `.env.example` for the required RPC endpoints, Etherscan API key, deployer address, and Pinata JWT. The deployer must have a `cast wallet` account (e.g. `--account deployer`).
 
 ## Useful Commands
 
