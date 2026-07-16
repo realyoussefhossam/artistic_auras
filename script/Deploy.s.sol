@@ -22,6 +22,7 @@ contract DeployArtisticAuras is Script {
         console.log("Max mint per address:", artisticAuras.maxMintPerAddress());
         console.log("Public sale active:", artisticAuras.publicSaleActive());
         console.log("Paused:", artisticAuras.paused());
+        console.log("Royalty basis points:", artisticAuras.ROYALTY_BASIS_POINTS());
         console.log("Base URI:", baseURI);
     }
 }

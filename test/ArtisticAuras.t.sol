@@ -2,6 +2,7 @@
 pragma solidity ^0.8.27;
 
 import "forge-std/Test.sol";
+import {IERC2981} from "@openzeppelin/contracts/interfaces/IERC2981.sol";
 import {ArtisticAuras} from "../src/ArtisticAuras.sol";
 
 contract ArtisticAurasTest is Test {
@@ -177,5 +178,40 @@ contract ArtisticAurasTest is Test {
 
         assertEq(owner.balance, balanceBefore + MINT_PRICE);
         assertEq(address(artisticAuras).balance, 0);
+    }
+
+    function test_DefaultRoyalty() public {
+        _enableSale();
+        vm.deal(user1, MINT_PRICE);
+        vm.prank(user1);
+        artisticAuras.mint{value: MINT_PRICE}(1);
+
+        uint256 salePrice = 1 ether;
+        (address receiver, uint256 royaltyAmount) = artisticAuras.royaltyInfo(1, salePrice);
+
+        assertEq(receiver, owner);
+        assertEq(royaltyAmount, salePrice * artisticAuras.ROYALTY_BASIS_POINTS() / 10_000);
+    }
+
+    function test_SupportsERC2981Interface() public view {
+        assertTrue(artisticAuras.supportsInterface(type(IERC2981).interfaceId));
+    }
+
+    function test_SetDefaultRoyaltyByOwner() public {
+        vm.prank(owner);
+        artisticAuras.setDefaultRoyalty(user2, 1_000);
+
+        uint256 salePrice = 1 ether;
+        (address receiver, uint256 royaltyAmount) = artisticAuras.royaltyInfo(1, salePrice);
+
+        assertEq(receiver, user2);
+        assertEq(royaltyAmount, 0.1 ether);
+    }
+
+    function test_SetDefaultRoyaltyRevertsForNonOwner() public {
+        vm.startPrank(user1);
+        vm.expectRevert();
+        artisticAuras.setDefaultRoyalty(user2, 1_000);
+        vm.stopPrank();
     }
 }

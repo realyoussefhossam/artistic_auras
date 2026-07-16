@@ -3,16 +3,18 @@ pragma solidity ^0.8.27;
 
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {ERC721Pausable} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol";
+import {ERC2981} from "@openzeppelin/contracts/token/common/ERC2981.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
-contract ArtisticAuras is ERC721, ERC721Pausable, Ownable {
+contract ArtisticAuras is ERC721, ERC721Pausable, ERC2981, Ownable {
     using Strings for uint256;
 
     uint256 private _tokenIds;
 
     uint256 public constant MAX_SUPPLY = 21;
     uint256 public constant MINT_PRICE = 0.04 ether;
+    uint96 public constant ROYALTY_BASIS_POINTS = 500; // 5%
 
     mapping(address => uint256) public mintedCount;
     uint256 public maxMintPerAddress = 1;
@@ -24,6 +26,7 @@ contract ArtisticAuras is ERC721, ERC721Pausable, Ownable {
 
     constructor(string memory baseURI) ERC721("Artistic Auras", "AURA") Ownable(msg.sender) {
         _baseTokenURI = baseURI;
+        _setDefaultRoyalty(owner(), ROYALTY_BASIS_POINTS);
     }
 
     modifier whenPublicSaleActive() {
@@ -67,6 +70,14 @@ contract ArtisticAuras is ERC721, ERC721Pausable, Ownable {
         publicSaleActive = active;
     }
 
+    function setDefaultRoyalty(address receiver, uint96 feeNumerator) external onlyOwner {
+        _setDefaultRoyalty(receiver, feeNumerator);
+    }
+
+    function setTokenRoyalty(uint256 tokenId, address receiver, uint96 feeNumerator) external onlyOwner {
+        _setTokenRoyalty(tokenId, receiver, feeNumerator);
+    }
+
     function pause() external onlyOwner {
         _pause();
     }
@@ -94,6 +105,15 @@ contract ArtisticAuras is ERC721, ERC721Pausable, Ownable {
     function tokenURI(uint256 tokenId) public view override(ERC721) returns (string memory) {
         _requireOwned(tokenId);
         return string(abi.encodePacked(_baseURI(), tokenId.toString(), ".json"));
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721, ERC2981)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
     }
 
     function _update(address to, uint256 tokenId, address auth)
