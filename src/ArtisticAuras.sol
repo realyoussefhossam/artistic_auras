@@ -16,8 +16,6 @@ contract ArtisticAuras is ERC721, ERC721Pausable, ERC2981, Ownable {
     uint256 public constant MINT_PRICE = 0.04 ether;
     uint96 public constant ROYALTY_BASIS_POINTS = 500; // 5%
 
-    mapping(address => uint256) public mintedCount;
-    uint256 public maxMintPerAddress = 1;
     bool public publicSaleActive;
 
     string private _baseTokenURI;
@@ -37,15 +35,12 @@ contract ArtisticAuras is ERC721, ERC721Pausable, ERC2981, Ownable {
     function mint(uint256 quantity) external payable whenNotPaused whenPublicSaleActive {
         require(msg.value >= MINT_PRICE * quantity, "Insufficient payment");
         require(_tokenIds + quantity <= MAX_SUPPLY, "Max supply reached");
-        require(mintedCount[msg.sender] + quantity <= maxMintPerAddress, "Max mint per address reached");
 
         for (uint256 i = 0; i < quantity; i++) {
             _tokenIds++;
             _safeMint(msg.sender, _tokenIds);
             emit NFTMinted(msg.sender, _tokenIds);
         }
-
-        mintedCount[msg.sender] += quantity;
     }
 
     function mintToAddress(address to, uint256 quantity) external onlyOwner {
@@ -60,10 +55,6 @@ contract ArtisticAuras is ERC721, ERC721Pausable, ERC2981, Ownable {
 
     function setBaseURI(string calldata baseURI) external onlyOwner {
         _baseTokenURI = baseURI;
-    }
-
-    function setMaxMintPerAddress(uint256 newMaxMint) external onlyOwner {
-        maxMintPerAddress = newMaxMint;
     }
 
     function setPublicSaleActive(bool active) external onlyOwner {

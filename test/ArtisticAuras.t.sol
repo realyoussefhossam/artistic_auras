@@ -38,7 +38,6 @@ contract ArtisticAurasTest is Test {
         assertEq(artisticAuras.owner(), owner);
         assertEq(artisticAuras.MAX_SUPPLY(), MAX_SUPPLY);
         assertEq(artisticAuras.MINT_PRICE(), MINT_PRICE);
-        assertEq(artisticAuras.maxMintPerAddress(), 1);
         assertEq(artisticAuras.publicSaleActive(), false);
         assertEq(artisticAuras.paused(), false);
     }
@@ -57,7 +56,6 @@ contract ArtisticAurasTest is Test {
         assertEq(artisticAuras.ownerOf(1), user1);
         assertEq(artisticAuras.tokenURI(1), string.concat(BASE_URI, "1.json"));
         assertEq(artisticAuras.getTotalSupply(), 1);
-        assertEq(artisticAuras.mintedCount(user1), 1);
     }
 
     function test_MintRevertsWithInsufficientPayment() public {
@@ -70,15 +68,17 @@ contract ArtisticAurasTest is Test {
         vm.stopPrank();
     }
 
-    function test_MintRevertsWhenMaxMintPerAddressReached() public {
+    function test_MultipleMintsBySameWalletAllowed() public {
         _enableSale();
-        vm.deal(user1, MINT_PRICE * 2);
+        uint256 quantity = 3;
+        vm.deal(user1, MINT_PRICE * quantity);
 
         vm.startPrank(user1);
-        artisticAuras.mint{value: MINT_PRICE}(1);
-        vm.expectRevert("Max mint per address reached");
-        artisticAuras.mint{value: MINT_PRICE}(1);
+        artisticAuras.mint{value: MINT_PRICE * quantity}(quantity);
         vm.stopPrank();
+
+        assertEq(artisticAuras.getTotalSupply(), quantity);
+        assertEq(artisticAuras.ownerOf(quantity), user1);
     }
 
     function test_MintRevertsWhenSaleNotActive() public {
@@ -155,7 +155,6 @@ contract ArtisticAurasTest is Test {
         vm.stopPrank();
 
         assertEq(artisticAuras.ownerOf(1), user2);
-        assertEq(artisticAuras.mintedCount(user2), 0);
     }
 
     function test_MintToAddressRevertsForNonOwner() public {
