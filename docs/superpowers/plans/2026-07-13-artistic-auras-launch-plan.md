@@ -4,18 +4,19 @@
 
 **Goal:** Build, test, and launch the 21-token Artistic Auras ERC-721 NFT collection on Ethereum mainnet, including metadata cleanup, smart contract, Next.js minting site, and testnet-to-mainnet deployment.
 
-**Architecture:** Foundry-managed Solidity contract using OpenZeppelin v5.x ERC-721Royalty + Python cleanup scripts for the existing CSV/image assets + Next.js 14 App Router frontend with RainbowKit/wagmi + IPFS metadata pinning via Pinata.
+**Architecture:** Foundry-managed Solidity contract using OpenZeppelin v5.x `ERC721` + `ERC721Pausable` + `ERC2981` + Python cleanup scripts for the existing CSV/image assets + Next.js 14 App Router frontend with RainbowKit/wagmi + IPFS metadata pinning via Pinata.
 
-**Tech Stack:** Solidity ^0.8.20, Foundry, OpenZeppelin Contracts v5.x, Python 3, pytest, Next.js 14, TypeScript, Tailwind CSS, shadcn/ui, RainbowKit v2, wagmi v2, viem.
+**Tech Stack:** Solidity ^0.8.27, Foundry, OpenZeppelin Contracts v5.x, Python 3, pytest, Next.js 14, TypeScript, Tailwind CSS, shadcn/ui, RainbowKit v2, wagmi v2, viem.
 
 ## Global Constraints
 
 - Blockchain: Ethereum mainnet
 - Testnet: Sepolia
-- Contract standard: OpenZeppelin ERC-721Royalty + `Ownable` + `Pausable` (v5.x)
-- Total supply: 21 (fixed, token IDs taken from `metadata-Files.csv`)
+- Contract standard: OpenZeppelin `ERC721` + `ERC721Pausable` + `ERC2981` + `Ownable` (v5.x)
+- Total supply: 21 (fixed)
+- Token IDs: sequential `1`–`21` mapped to `metadata/<id>.json`
 - Mint model: fixed-price public sale
-- Mint price: `1 ether / 21` per token (≈0.04762 ETH)
+- Mint price: `0.04 ether` per token (fixed)
 - Max mint per wallet: unlimited
 - Royalties: 5% (500 basis points) via ERC-2981
 - Metadata reveal: visible immediately
@@ -140,7 +141,7 @@ git commit -m "chore: scaffold Foundry toolchain and project layout"
 **Interfaces:**
 
 - Consumes: `metadata-Files.csv`, `special/special/*.png`
-- Produces: `metadata/<token-id>.json`, `out/token_ids.json`, `metadata-Files.cleaned.csv`
+- Produces: `metadata/<sequential-id>.json`, `out/token_ids.json`, `metadata-Files.cleaned.csv`
 
 ---
 
@@ -171,8 +172,8 @@ def test_cleanup_generates_21_jsons_and_token_ids(tmp_path):
     token_ids = json.loads((out_dir / "token_ids.json").read_text())["tokenIds"]
     assert len(token_ids) == 21
     assert len(sorted(metadata_dir.glob("*.json"))) == 21
-    assert token_ids[0] == 6
-    assert token_ids[-1] == 443
+    assert token_ids[0] == 1
+    assert token_ids[-1] == 21
 
 
 def test_cleanup_generates_gallery_token_list(tmp_path):
@@ -256,6 +257,10 @@ def cleanup(csv_path: Path, image_dir: Path, out_dir: Path, metadata_dir: Path) 
     out_dir.mkdir(parents=True, exist_ok=True)
     metadata_dir.mkdir(parents=True, exist_ok=True)
 
+    # Clear any previously generated metadata JSONs so IDs stay clean.
+    for stale in metadata_dir.glob("*.json"):
+        stale.unlink()
+
     rows = []
     with csv_path.open(newline="", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f, skipinitialspace=True)
@@ -266,10 +271,10 @@ def cleanup(csv_path: Path, image_dir: Path, out_dir: Path, metadata_dir: Path) 
     cleaned_rows = []
     token_list = []
 
-    for row in rows:
-        token_id_str = row["tokenID"].strip()
-        token_id = int(token_id_str)
-        token_ids.append(token_id)
+    for index, row in enumerate(rows, start=1):
+        sequential_id = index
+        token_ids.append(sequential_id)
+        original_token_id = row["tokenID"].strip()
 
         original_file = row["file_name"].strip()
         name = row["name"].strip()
@@ -299,11 +304,12 @@ def cleanup(csv_path: Path, image_dir: Path, out_dir: Path, metadata_dir: Path) 
             "attributes": attributes,
         }
 
-        json_path = metadata_dir / f"{token_id}.json"
+        json_path = metadata_dir / f"{sequential_id}.json"
         json_path.write_text(json.dumps(metadata, indent=2), encoding="utf-8")
 
         cleaned_row = {
-            "tokenID": token_id_str,
+            "sequential_id": sequential_id,
+            "original_token_id": original_token_id,
             "name": name,
             "description": description,
             "file_name": normalized_file,
@@ -313,7 +319,7 @@ def cleanup(csv_path: Path, image_dir: Path, out_dir: Path, metadata_dir: Path) 
 
         token_list.append(
             {
-                "tokenId": token_id,
+                "tokenId": sequential_id,
                 "name": name,
                 "image": metadata["image"],
             }
@@ -332,7 +338,8 @@ def cleanup(csv_path: Path, image_dir: Path, out_dir: Path, metadata_dir: Path) 
         writer = csv.DictWriter(
             f,
             fieldnames=[
-                "tokenID",
+                "sequential_id",
+                "original_token_id",
                 "name",
                 "description",
                 "file_name",
@@ -370,9 +377,9 @@ python scripts/cleanup_metadata.py
 
 Expected outputs:
 
-- `metadata/6.json` through `metadata/443.json`
-- `out/token_ids.json`
-- `out/metadata-Files.cleaned.csv`
+- `metadata/1.json` through `metadata/21.json`
+- `out/token_ids.json` (token IDs `[1, 2, ..., 21]`)
+- `out/metadata-Files.cleaned.csv` (includes `sequential_id` and `original_token_id`)
 - all `special/special/*.PNG` renamed to `.png`
 
 - [ ] **Step 6: Add the Pinata pinning script**
@@ -430,7 +437,7 @@ git commit -m "feat: add metadata cleanup script and generate JSONs"
 
 **Interfaces:**
 
-- Consumes: `out/token_ids.json` shape (21 uint256 IDs)
+- Consumes: `METADATA_BASE_URI` from `.env`
 - Produces: `ArtisticAuras` contract with `mint(uint256)`, owner functions, royalty info
 
 ---
@@ -441,40 +448,53 @@ Create `test/ArtisticAuras.t.sol`:
 
 ```solidity
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.27;
 
 import "forge-std/Test.sol";
-import "../src/ArtisticAuras.sol";
-import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
+import {IERC2981} from "@openzeppelin/contracts/interfaces/IERC2981.sol";
+import {ArtisticAuras} from "../src/ArtisticAuras.sol";
 
 contract ArtisticAurasTest is Test {
-    ArtisticAuras public nft;
-    address public owner = address(0xABCD);
-    address public minter = address(0xBEEF);
+    ArtisticAuras public artisticAuras;
+    address public owner;
+    address public user1;
+    address public user2;
 
-    function getTokenIds() internal pure returns (uint256[21] memory) {
-        uint256[21] memory ids;
-        ids[0] = 6; ids[1] = 8; ids[2] = 10; ids[3] = 14; ids[4] = 17;
-        ids[5] = 19; ids[6] = 31; ids[7] = 33; ids[8] = 35; ids[9] = 39;
-        ids[10] = 40; ids[11] = 43; ids[12] = 49; ids[13] = 63; ids[14] = 67;
-        ids[15] = 70; ids[16] = 92; ids[17] = 93; ids[18] = 120; ids[19] = 178;
-        ids[20] = 443;
-        return ids;
-    }
+    string public constant BASE_URI = "ipfs://QmTest/";
+    uint256 public constant MINT_PRICE = 0.04 ether;
+    uint256 public constant MAX_SUPPLY = 21;
+
+    event NFTMinted(address indexed to, uint256 indexed tokenId);
 
     function setUp() public {
-        vm.deal(owner, 100 ether);
-        vm.deal(minter, 100 ether);
-        vm.prank(owner);
-        nft = new ArtisticAuras(owner, getTokenIds(), "ipfs://QmTest/");
+        owner = makeAddr("owner");
+        user1 = makeAddr("user1");
+        user2 = makeAddr("user2");
+
+        vm.startPrank(owner);
+        artisticAuras = new ArtisticAuras(BASE_URI);
+        vm.stopPrank();
     }
 
-    function test_MintOneToken() public {
-        uint256 price = nft.mintPrice();
-        vm.prank(minter);
-        nft.mint{value: price}(1);
-        assertEq(nft.balanceOf(minter), 1);
-        assertEq(nft.ownerOf(6), minter);
+    function _enableSale() internal {
+        vm.prank(owner);
+        artisticAuras.setPublicSaleActive(true);
+    }
+
+    function test_Mint() public {
+        _enableSale();
+        vm.deal(user1, MINT_PRICE);
+
+        vm.startPrank(user1);
+        vm.expectEmit(true, true, true, true);
+        emit NFTMinted(user1, 1);
+
+        artisticAuras.mint{value: MINT_PRICE}(1);
+        vm.stopPrank();
+
+        assertEq(artisticAuras.ownerOf(1), user1);
+        assertEq(artisticAuras.tokenURI(1), string.concat(BASE_URI, "1.json"));
+        assertEq(artisticAuras.getTotalSupply(), 1);
     }
 }
 ```
@@ -482,7 +502,7 @@ contract ArtisticAurasTest is Test {
 - [ ] **Step 2: Run the failing test**
 
 ```bash
-forge test --match-test test_MintOneToken -vvv
+forge test --match-test test_Mint -vvv
 ```
 
 Expected: compiler error because `ArtisticAuras.sol` does not exist.
@@ -493,49 +513,57 @@ Create `src/ArtisticAuras.sol`:
 
 ```solidity
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.27;
 
-import {ERC721Royalty} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Royalty.sol";
+import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import {ERC721Pausable} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol";
+import {ERC2981} from "@openzeppelin/contracts/token/common/ERC2981.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
-contract ArtisticAuras is ERC721Royalty, Ownable, Pausable {
+contract ArtisticAuras is ERC721, ERC721Pausable, ERC2981, Ownable {
     using Strings for uint256;
 
+    uint256 private _tokenIds;
+
     uint256 public constant MAX_SUPPLY = 21;
-    uint256 public mintPrice;
-    bool public publicSaleActive = true;
-    uint256[21] public tokenIds;
-    uint256 public nextTokenIndex;
+    uint256 public constant MINT_PRICE = 0.04 ether;
+    uint96 public constant ROYALTY_BASIS_POINTS = 500; // 5%
+
+    bool public publicSaleActive;
 
     string private _baseTokenURI;
 
-    error MintPriceNotMet();
-    error MaxSupplyExceeded();
-    error PublicSaleNotActive();
-    error InvalidQuantity();
+    event NFTMinted(address indexed to, uint256 indexed tokenId);
 
-    constructor(
-        address initialOwner,
-        uint256[21] memory _tokenIds,
-        string memory baseURI
-    ) ERC721("ArtisticAuras", "AURA") Ownable(initialOwner) {
-        tokenIds = _tokenIds;
+    constructor(string memory baseURI) ERC721("Artistic Auras", "AURA") Ownable(msg.sender) {
         _baseTokenURI = baseURI;
-        mintPrice = 1 ether / 21;
-        _setDefaultRoyalty(initialOwner, 500);
+        _setDefaultRoyalty(owner(), ROYALTY_BASIS_POINTS);
     }
 
-    function mint(uint256 quantity) external payable whenNotPaused {
-        if (!publicSaleActive) revert PublicSaleNotActive();
-        if (quantity == 0) revert InvalidQuantity();
-        if (nextTokenIndex + quantity > tokenIds.length) revert MaxSupplyExceeded();
-        if (msg.value != quantity * mintPrice) revert MintPriceNotMet();
+    modifier whenPublicSaleActive() {
+        require(publicSaleActive, "Public sale is not active");
+        _;
+    }
+
+    function mint(uint256 quantity) external payable whenNotPaused whenPublicSaleActive {
+        require(msg.value >= MINT_PRICE * quantity, "Insufficient payment");
+        require(_tokenIds + quantity <= MAX_SUPPLY, "Max supply reached");
 
         for (uint256 i = 0; i < quantity; i++) {
-            uint256 tokenId = tokenIds[nextTokenIndex++];
-            _safeMint(msg.sender, tokenId);
+            _tokenIds++;
+            _safeMint(msg.sender, _tokenIds);
+            emit NFTMinted(msg.sender, _tokenIds);
+        }
+    }
+
+    function mintToAddress(address to, uint256 quantity) external onlyOwner {
+        require(_tokenIds + quantity <= MAX_SUPPLY, "Max supply reached");
+
+        for (uint256 i = 0; i < quantity; i++) {
+            _tokenIds++;
+            _safeMint(to, _tokenIds);
+            emit NFTMinted(to, _tokenIds);
         }
     }
 
@@ -543,38 +571,62 @@ contract ArtisticAuras is ERC721Royalty, Ownable, Pausable {
         _baseTokenURI = baseURI;
     }
 
-    function setMintPrice(uint256 _mintPrice) external onlyOwner {
-        mintPrice = _mintPrice;
-    }
-
-    function togglePublicSale() external onlyOwner {
-        publicSaleActive = !publicSaleActive;
+    function setPublicSaleActive(bool active) external onlyOwner {
+        publicSaleActive = active;
     }
 
     function setDefaultRoyalty(address receiver, uint96 feeNumerator) external onlyOwner {
         _setDefaultRoyalty(receiver, feeNumerator);
     }
 
-    function withdraw() external onlyOwner {
-        (bool success, ) = payable(owner()).call{value: address(this).balance}("");
-        require(success, "Withdraw failed");
+    function setTokenRoyalty(uint256 tokenId, address receiver, uint96 feeNumerator) external onlyOwner {
+        _setTokenRoyalty(tokenId, receiver, feeNumerator);
     }
 
-    function pause() public onlyOwner {
+    function pause() external onlyOwner {
         _pause();
     }
 
-    function unpause() public onlyOwner {
+    function unpause() external onlyOwner {
         _unpause();
+    }
+
+    function withdraw() external onlyOwner {
+        uint256 balance = address(this).balance;
+        require(balance > 0, "No funds to withdraw");
+
+        (bool success,) = payable(owner()).call{value: balance}("");
+        require(success, "Withdrawal failed");
+    }
+
+    function getTotalSupply() external view returns (uint256) {
+        return _tokenIds;
     }
 
     function _baseURI() internal view override returns (string memory) {
         return _baseTokenURI;
     }
 
-    function tokenURI(uint256 tokenId) public view override returns (string memory) {
+    function tokenURI(uint256 tokenId) public view override(ERC721) returns (string memory) {
         _requireOwned(tokenId);
         return string(abi.encodePacked(_baseURI(), tokenId.toString(), ".json"));
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721, ERC2981)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
+
+    function _update(address to, uint256 tokenId, address auth)
+        internal
+        override(ERC721, ERC721Pausable)
+        returns (address)
+    {
+        return super._update(to, tokenId, auth);
     }
 }
 ```
@@ -592,68 +644,170 @@ Expected: all tests pass.
 Append to `test/ArtisticAuras.t.sol`:
 
 ```solidity
-    function test_MintRevertsWithWrongPrice() public {
-        uint256 price = nft.mintPrice();
-        vm.prank(minter);
-        vm.expectRevert(ArtisticAuras.MintPriceNotMet.selector);
-        nft.mint{value: price - 1}(1);
+    function test_Constructor() public view {
+        assertEq(artisticAuras.name(), "Artistic Auras");
+        assertEq(artisticAuras.symbol(), "AURA");
+        assertEq(artisticAuras.owner(), owner);
+        assertEq(artisticAuras.MAX_SUPPLY(), MAX_SUPPLY);
+        assertEq(artisticAuras.MINT_PRICE(), MINT_PRICE);
+        assertEq(artisticAuras.publicSaleActive(), false);
+        assertEq(artisticAuras.paused(), false);
+    }
+
+    function test_MintRevertsWithInsufficientPayment() public {
+        _enableSale();
+        vm.deal(user1, MINT_PRICE);
+
+        vm.startPrank(user1);
+        vm.expectRevert("Insufficient payment");
+        artisticAuras.mint{value: MINT_PRICE - 1}(1);
+        vm.stopPrank();
+    }
+
+    function test_MultipleMintsBySameWalletAllowed() public {
+        _enableSale();
+        uint256 quantity = 3;
+        vm.deal(user1, MINT_PRICE * quantity);
+
+        vm.startPrank(user1);
+        artisticAuras.mint{value: MINT_PRICE * quantity}(quantity);
+        vm.stopPrank();
+
+        assertEq(artisticAuras.getTotalSupply(), quantity);
+        assertEq(artisticAuras.ownerOf(quantity), user1);
+    }
+
+    function test_MintRevertsWhenSaleNotActive() public {
+        vm.deal(user1, MINT_PRICE);
+
+        vm.startPrank(user1);
+        vm.expectRevert("Public sale is not active");
+        artisticAuras.mint{value: MINT_PRICE}(1);
+        vm.stopPrank();
     }
 
     function test_MintRevertsWhenPaused() public {
+        _enableSale();
+        vm.deal(user1, MINT_PRICE);
+
         vm.prank(owner);
-        nft.pause();
-        vm.prank(minter);
-        vm.expectRevert(Pausable.EnforcedPause.selector);
-        nft.mint{value: nft.mintPrice()}(1);
+        artisticAuras.pause();
+
+        vm.startPrank(user1);
+        vm.expectRevert(abi.encodeWithSignature("EnforcedPause()"));
+        artisticAuras.mint{value: MINT_PRICE}(1);
+        vm.stopPrank();
     }
 
-    function test_MintRevertsWhenSaleInactive() public {
+    function test_TransferRevertsWhenPaused() public {
+        _enableSale();
+        vm.deal(user1, MINT_PRICE);
+
+        vm.prank(user1);
+        artisticAuras.mint{value: MINT_PRICE}(1);
+
         vm.prank(owner);
-        nft.togglePublicSale();
-        vm.prank(minter);
-        vm.expectRevert(ArtisticAuras.PublicSaleNotActive.selector);
-        nft.mint{value: nft.mintPrice()}(1);
+        artisticAuras.pause();
+
+        vm.prank(user1);
+        vm.expectRevert(abi.encodeWithSignature("EnforcedPause()"));
+        artisticAuras.transferFrom(user1, user2, 1);
     }
 
-    function test_SupplyCap() public {
-        uint256 price = nft.mintPrice();
-        vm.startPrank(minter);
-        for (uint256 i = 0; i < 21; i++) {
-            nft.mint{value: price}(1);
-        }
-        vm.expectRevert(ArtisticAuras.MaxSupplyExceeded.selector);
-        nft.mint{value: price}(1);
+    function test_PauseAndUnpause() public {
+        _enableSale();
+        vm.deal(user1, MINT_PRICE);
+
+        vm.prank(owner);
+        artisticAuras.pause();
+        assertEq(artisticAuras.paused(), true);
+
+        vm.prank(owner);
+        artisticAuras.unpause();
+        assertEq(artisticAuras.paused(), false);
+
+        vm.prank(user1);
+        artisticAuras.mint{value: MINT_PRICE}(1);
+        assertEq(artisticAuras.ownerOf(1), user1);
+    }
+
+    function test_NonOwnerCannotPause() public {
+        vm.startPrank(user1);
+        vm.expectRevert();
+        artisticAuras.pause();
+        vm.stopPrank();
+    }
+
+    function test_NonOwnerCannotToggleSale() public {
+        vm.startPrank(user1);
+        vm.expectRevert();
+        artisticAuras.setPublicSaleActive(true);
+        vm.stopPrank();
+    }
+
+    function test_MintToAddressByOwner() public {
+        vm.startPrank(owner);
+        artisticAuras.mintToAddress(user2, 1);
+        vm.stopPrank();
+
+        assertEq(artisticAuras.ownerOf(1), user2);
+    }
+
+    function test_MintToAddressRevertsForNonOwner() public {
+        vm.startPrank(user1);
+        vm.expectRevert();
+        artisticAuras.mintToAddress(user2, 1);
         vm.stopPrank();
     }
 
     function test_Withdraw() public {
-        uint256 price = nft.mintPrice();
-        vm.prank(minter);
-        nft.mint{value: price}(1);
+        _enableSale();
+        vm.deal(user1, MINT_PRICE);
+        vm.prank(user1);
+        artisticAuras.mint{value: MINT_PRICE}(1);
+
         uint256 balanceBefore = owner.balance;
+
         vm.prank(owner);
-        nft.withdraw();
-        assertEq(owner.balance, balanceBefore + price);
+        artisticAuras.withdraw();
+
+        assertEq(owner.balance, balanceBefore + MINT_PRICE);
+        assertEq(address(artisticAuras).balance, 0);
     }
 
-    function test_RoyaltyInfo() public {
-        (address receiver, uint256 royaltyAmount) = nft.royaltyInfo(6, 1 ether);
+    function test_DefaultRoyalty() public {
+        _enableSale();
+        vm.deal(user1, MINT_PRICE);
+        vm.prank(user1);
+        artisticAuras.mint{value: MINT_PRICE}(1);
+
+        uint256 salePrice = 1 ether;
+        (address receiver, uint256 royaltyAmount) = artisticAuras.royaltyInfo(1, salePrice);
+
         assertEq(receiver, owner);
-        assertEq(royaltyAmount, 0.05 ether);
+        assertEq(royaltyAmount, salePrice * artisticAuras.ROYALTY_BASIS_POINTS() / 10_000);
     }
 
-    function test_TokenURI() public {
-        uint256 price = nft.mintPrice();
-        vm.prank(minter);
-        nft.mint{value: price}(1);
-        assertEq(nft.tokenURI(6), "ipfs://QmTest/6.json");
+    function test_SupportsERC2981Interface() public view {
+        assertTrue(artisticAuras.supportsInterface(type(IERC2981).interfaceId));
     }
 
-    function test_OwnershipTransfer() public {
-        address newOwner = address(0x1234);
+    function test_SetDefaultRoyaltyByOwner() public {
         vm.prank(owner);
-        nft.transferOwnership(newOwner);
-        assertEq(nft.owner(), newOwner);
+        artisticAuras.setDefaultRoyalty(user2, 1_000);
+
+        uint256 salePrice = 1 ether;
+        (address receiver, uint256 royaltyAmount) = artisticAuras.royaltyInfo(1, salePrice);
+
+        assertEq(receiver, user2);
+        assertEq(royaltyAmount, 0.1 ether);
+    }
+
+    function test_SetDefaultRoyaltyRevertsForNonOwner() public {
+        vm.startPrank(user1);
+        vm.expectRevert();
+        artisticAuras.setDefaultRoyalty(user2, 1_000);
+        vm.stopPrank();
     }
 ```
 
@@ -663,7 +817,7 @@ Append to `test/ArtisticAuras.t.sol`:
 forge test -vvv
 ```
 
-Expected: 9 tests pass.
+Expected: 17 tests pass.
 
 - [ ] **Step 7: Commit**
 
@@ -683,7 +837,7 @@ git commit -m "feat: add OpenZeppelin ERC-721 contract and tests"
 
 **Interfaces:**
 
-- Consumes: `out/token_ids.json`
+- Consumes: `METADATA_BASE_URI` from `.env`
 - Produces: deployed contract address, verified source on Etherscan
 
 ---
@@ -696,7 +850,6 @@ Create `.env.example`:
 SEPOLIA_RPC=https://ethereum-sepolia-rpc.publicnode.com
 MAINNET_RPC=https://ethereum-rpc.publicnode.com
 ETHERSCAN_API_KEY=your_etherscan_api_key
-PRIVATE_KEY=your_deployer_private_key
 DEPLOYER_ADDRESS=your_deployer_address
 METADATA_BASE_URI=ipfs://<metadata-folder-cid>/
 PINATA_JWT=your_pinata_jwt
@@ -708,36 +861,30 @@ Create `script/Deploy.s.sol`:
 
 ```solidity
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.27;
 
-import "forge-std/Script.sol";
-import "../src/ArtisticAuras.sol";
+import {Script, console} from "forge-std/Script.sol";
+import {ArtisticAuras} from "../src/ArtisticAuras.sol";
 
-contract Deploy is Script {
-    function readTokenIds() internal view returns (uint256[21] memory) {
-        string memory root = vm.projectRoot();
-        string memory path = string.concat(root, "/out/token_ids.json");
-        string memory json = vm.readFile(path);
-        uint256[] memory ids = vm.parseJsonUintArray(json, ".tokenIds");
-        require(ids.length == 21, "Expected 21 token IDs");
-
-        uint256[21] memory tokenIds;
-        for (uint256 i = 0; i < 21; i++) {
-            tokenIds[i] = ids[i];
-        }
-        return tokenIds;
-    }
-
+contract DeployArtisticAuras is Script {
     function run() external {
         string memory baseURI = vm.envString("METADATA_BASE_URI");
-        uint256[21] memory tokenIds = readTokenIds();
-        address deployer = vm.envAddress("DEPLOYER_ADDRESS");
 
         vm.startBroadcast();
-        ArtisticAuras nft = new ArtisticAuras(deployer, tokenIds, baseURI);
+        ArtisticAuras artisticAuras = new ArtisticAuras(baseURI);
+        address deployer = artisticAuras.owner();
         vm.stopBroadcast();
 
-        console.log("ArtisticAuras deployed at:", address(nft));
+        console.log("ArtisticAuras deployed at:", address(artisticAuras));
+        console.log("Deployer/owner address:", deployer);
+        console.log("Token name:", artisticAuras.name());
+        console.log("Token symbol:", artisticAuras.symbol());
+        console.log("Max supply:", artisticAuras.MAX_SUPPLY());
+        console.log("Mint price:", artisticAuras.MINT_PRICE());
+        console.log("Public sale active:", artisticAuras.publicSaleActive());
+        console.log("Paused:", artisticAuras.paused());
+        console.log("Royalty basis points:", artisticAuras.ROYALTY_BASIS_POINTS());
+        console.log("Base URI:", baseURI);
     }
 }
 ```
@@ -783,7 +930,7 @@ source .env
 - [ ] **Step 2: Broadcast to Sepolia**
 
 ```bash
-forge script script/Deploy.s.sol --rpc-url sepolia --broadcast --verify -vvv
+forge script script/Deploy.s.sol --rpc-url sepolia --broadcast --verify --account deployer -vvv
 ```
 
 Expected: contract deploys and Etherscan verification succeeds.
@@ -805,7 +952,8 @@ Create `deployment-sepolia.json`:
 - [ ] **Step 4: Test a mint on Sepolia**
 
 ```bash
-cast send <contract-address> "mint(uint256)" 1 --value 47619047619047619wei --rpc-url $SEPOLIA_RPC --private-key $PRIVATE_KEY
+cast send <contract-address> "setPublicSaleActive(bool)" true --rpc-url $SEPOLIA_RPC --account deployer
+cast send <contract-address> "mint(uint256)" 1 --value 0.04ether --rpc-url $SEPOLIA_RPC --account deployer
 ```
 
 Or test from the frontend once it is wired to Sepolia.
@@ -1031,7 +1179,7 @@ export const CONTRACT_ABI = [
   },
   {
     inputs: [],
-    name: "mintPrice",
+    name: "MINT_PRICE",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
@@ -1045,7 +1193,7 @@ export const CONTRACT_ABI = [
   },
   {
     inputs: [],
-    name: "totalSupply",
+    name: "getTotalSupply",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
@@ -1105,13 +1253,13 @@ export function MintCard() {
   const { data: mintPrice } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: CONTRACT_ABI,
-    functionName: "mintPrice",
+    functionName: "MINT_PRICE",
   });
 
   const { data: totalSupply } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: CONTRACT_ABI,
-    functionName: "totalSupply",
+    functionName: "getTotalSupply",
   });
 
   const { data: maxSupply } = useReadContract({
@@ -1321,7 +1469,7 @@ MAINNET_RPC=https://ethereum-rpc.publicnode.com
 
 ```bash
 source .env
-forge script script/Deploy.s.sol --rpc-url mainnet --broadcast --verify -vvv
+forge script script/Deploy.s.sol --rpc-url mainnet --broadcast --verify --account deployer -vvv
 ```
 
 - [ ] **Step 3: Record the mainnet deployment**
@@ -1341,13 +1489,13 @@ Create `deployment-mainnet.json`:
 - [ ] **Step 4: Withdraw any pre-launch ETH**
 
 ```bash
-cast send <contract-address> "withdraw()" --rpc-url $MAINNET_RPC --private-key $PRIVATE_KEY
+cast send <contract-address> "withdraw()" --rpc-url $MAINNET_RPC --account deployer
 ```
 
 - [ ] **Step 5: Transfer ownership to the client**
 
 ```bash
-cast send <contract-address> "transferOwnership(address)" <client-wallet-address> --rpc-url $MAINNET_RPC --private-key $PRIVATE_KEY
+cast send <contract-address> "transferOwnership(address)" <client-wallet-address> --rpc-url $MAINNET_RPC --account deployer
 ```
 
 Confirm ownership changed by reading `owner()`:

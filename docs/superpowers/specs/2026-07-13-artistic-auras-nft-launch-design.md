@@ -21,7 +21,7 @@ The CSV and image files need minor cleanup before they can be used reliably by a
 
 1. Launch a 21-token ERC-721 NFT collection on Ethereum mainnet.
 2. Provide a clean, validated metadata set pinned to IPFS/Pinata.
-3. Deploy a fixed-price public-sale contract that splits 1 ETH of value across all 21 tokens.
+3. Deploy a fixed-price public-sale contract at 0.04 ETH per token.
 4. Build a responsive Next.js minting website using shadcn/ui.
 5. Hand ownership of the contract to the client’s wallet after mainnet deployment.
 6. Include testnet validation on Sepolia before mainnet.
@@ -48,7 +48,7 @@ The CSV and image files need minor cleanup before they can be used reliably by a
 | Framework | Foundry |
 | Total supply | 21 (fixed) |
 | Mint model | Fixed-price public sale |
-| Mint price | `1 ether / 21` per token (≈0.04762 ETH) |
+| Mint price | `0.04 ether` per token (fixed) |
 | Max mint per wallet | Unlimited |
 | Royalties | 5% (500 basis points) via ERC-2981 |
 | Metadata reveal | Visible immediately |
@@ -105,7 +105,7 @@ Artist/Client assets
 
 ### 6.2 JSON generation
 
-Generate one JSON file per token in `metadata/<token-id>.json`:
+Generate one JSON file per token in `metadata/<sequential-id>.json` where `sequential-id` runs from `1` to `21` in CSV row order:
 
 ```json
 {
@@ -120,6 +120,8 @@ Generate one JSON file per token in `metadata/<token-id>.json`:
 }
 ```
 
+The original CSV `tokenID` is preserved in `out/metadata-Files.cleaned.csv` (column `original_token_id`), but the contract mints sequential IDs `1`–`21`.
+
 ### 6.3 Pinning
 
 - If the cleaned JSONs are byte-for-byte identical to the already-pinned versions, reuse the existing JSON folder CID from the CSV.
@@ -132,9 +134,9 @@ Generate one JSON file per token in `metadata/<token-id>.json`:
 
 ### 7.1 Dependencies
 
-- `openzeppelin-contracts` v5.x: `ERC721Royalty`, `Ownable`, `Pausable`.
+- `openzeppelin-contracts` v5.x: `ERC721`, `ERC721Pausable`, `ERC2981`, `Ownable`.
 - Foundry for compilation, testing, and deployment scripts.
-- Solidity `^0.8.20`.
+- Solidity `^0.8.27`.
 
 ### 7.2 Contract name
 
@@ -144,49 +146,54 @@ Generate one JSON file per token in `metadata/<token-id>.json`:
 
 ```solidity
 uint256 public constant MAX_SUPPLY = 21;
-uint256 public mintPrice = 1 ether / 21;
-bool public publicSaleActive = true;
+uint256 public constant MINT_PRICE = 0.04 ether;
+uint96 public constant ROYALTY_BASIS_POINTS = 500; // 5%
+bool public publicSaleActive;
 string private _baseTokenURI;
-uint256[21] public tokenIds;     // populated at deploy with CSV token IDs
-uint256 public nextTokenIndex;   // index into tokenIds for the next mint
+uint256 private _tokenIds;   // current total minted / last sequential token ID
 ```
+
+Token IDs are sequential `1`–`21`, mapping directly to `metadata/<id>.json`.
 
 ### 7.4 User functions
 
 - `mint(uint256 quantity) payable`
-  - Reverts with `PublicSaleNotActive` if `publicSaleActive` is false.
-  - Reverts with `MintPriceNotMet` if `msg.value != quantity * mintPrice`.
-  - Reverts with `MaxSupplyExceeded` if `nextTokenIndex + quantity > tokenIds.length`.
-  - Reverts with `InvalidQuantity` if `quantity == 0`.
-  - Also blocked by `whenNotPaused`.
-  - Mints the next `quantity` token IDs from `tokenIds` to `msg.sender` in order.
+  - Reverts with `"Public sale is not active"` if `publicSaleActive` is false.
+  - Reverts with `"Insufficient payment"` if `msg.value < quantity * MINT_PRICE`.
+  - Reverts with `"Max supply reached"` if `_tokenIds + quantity > MAX_SUPPLY`.
+  - Reverts with `EnforcedPause()` when the contract is paused.
+  - Mints sequential token IDs to `msg.sender`.
 
 ### 7.5 Owner functions
 
 - `setBaseURI(string calldata baseURI)` — update metadata folder URI.
-- `setMintPrice(uint256 _mintPrice)` — update per-token price.
-- `setDefaultRoyalty(address receiver, uint96 feeNumerator)` — `feeNumerator` is basis points; 500 = 5%.
-- `togglePublicSale()` — flip `publicSaleActive`.
-- `pause()` / `unpause()` — emergency pause inherited from OpenZeppelin `Pausable`; applied only to the `mint` function, not token transfers.
+- `setPublicSaleActive(bool active)` — enable or disable public minting.
+- `setDefaultRoyalty(address receiver, uint96 feeNumerator)` — update default royalty (basis points).
+- `setTokenRoyalty(uint256 tokenId, address receiver, uint96 feeNumerator)` — set per-token royalty override.
+- `pause()` / `unpause()` — emergency pause inherited from OpenZeppelin `ERC721Pausable`; blocks all transfers and mints while paused.
+- `mintToAddress(address to, uint256 quantity)` — owner-only reserve mint, bypasses sale state and payment.
 - `withdraw()` — sends the full contract ETH balance to `owner()`.
 - `transferOwnership(address newOwner)` — inherited from OpenZeppelin `Ownable`.
 
 ### 7.6 Royalties
 
-Use OpenZeppelin `ERC721Royalty` (which includes ERC-2981). `royaltyInfo(tokenId, salePrice)` returns `(owner(), 500)` (5%). Token IDs are ignored because the royalty is collection-wide.
+Use OpenZeppelin `ERC2981`. Constructor calls `_setDefaultRoyalty(owner(), 500)` (5%). `royaltyInfo(tokenId, salePrice)` returns the configured receiver and amount. Token IDs are ignored by the default royalty because it is collection-wide.
 
 ### 7.7 Errors
 
-```solidity
-error MintPriceNotMet();
-error MaxSupplyExceeded();
-error PublicSaleNotActive();
-error InvalidQuantity();
-```
+String-based require reverts:
+- `"Public sale is not active"`
+- `"Insufficient payment"`
+- `"Max supply reached"`
+- `"No funds to withdraw"`
+- `"Withdrawal failed"`
+
+OpenZeppelin built-in:
+- `EnforcedPause()` when transfers/mints are paused.
 
 ### 7.8 Token URI
 
-`_baseURI()` returns the IPFS folder CID. `tokenURI(tokenId)` calls `_requireOwned(tokenId)` and returns `string(abi.encodePacked(_baseURI(), tokenId.toString(), ".json"))` so each metadata file is resolved as `<cid>/<token-id>.json`.
+`_baseURI()` returns the IPFS folder CID. `tokenURI(tokenId)` calls `_requireOwned(tokenId)` and returns `string(abi.encodePacked(_baseURI(), tokenId.toString(), ".json"))` so each metadata file is resolved as `<cid>/<id>.json`.
 
 ---
 
@@ -204,7 +211,7 @@ error InvalidQuantity();
 
 1. **Home / Mint page**
    - Hero section with collection branding.
-   - Mint card showing: price, `totalSupply / MAX_SUPPLY`, quantity selector.
+   - Mint card showing: price, `getTotalSupply / MAX_SUPPLY`, quantity selector.
    - RainbowKit connect button and mint button.
    - Disabled states for: not connected, sale inactive, sold out, insufficient ETH.
 2. **Gallery page**
@@ -214,8 +221,8 @@ error InvalidQuantity();
 
 ### 8.3 Data flow
 
-- `useReadContract` to fetch `mintPrice`, `totalSupply`, `MAX_SUPPLY`, `publicSaleActive`.
-- `useWriteContract` + `useWaitForTransactionReceipt` to call `mint(quantity)` with `value = quantity * mintPrice`.
+- `useReadContract` to fetch `MINT_PRICE`, `getTotalSupply`, `MAX_SUPPLY`, `publicSaleActive`.
+- `useWriteContract` + `useWaitForTransactionReceipt` to call `mint(quantity)` with `value = quantity * MINT_PRICE`.
 - `useBalance` to warn if the wallet has insufficient ETH.
 
 ### 8.4 Environment variables
@@ -241,19 +248,19 @@ NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=...
 
 1. Run cleanup script and generate `metadata/` JSONs.
 2. Pin/re-pin metadata folder to Pinata/IPFS.
-3. Run Foundry deploy script on Sepolia. The deploy script loads the 21 token IDs from the cleaned CSV:
-   - `forge script script/Deploy.s.sol --rpc-url $SEPOLIA_RPC --broadcast --verify`
-4. Set `baseURI` to the Sepolia/test metadata folder CID.
+3. Run Foundry deploy script on Sepolia:
+   - `forge script script/Deploy.s.sol --rpc-url $SEPOLIA_RPC --broadcast --verify --account deployer`
+4. Confirm `METADATA_BASE_URI` points to the pinned metadata folder CID.
 5. Verify contract source on Etherscan Sepolia.
 6. Run frontend against Sepolia contract.
 7. Test mints from multiple wallets and confirm metadata renders on OpenSea testnet.
 
 ### 9.2 Mainnet
 
-1. Re-run the same deploy script on Ethereum mainnet, using the same 21 CSV token IDs:
-   - `forge script script/Deploy.s.sol --rpc-url $MAINNET_RPC --broadcast --verify`
+1. Re-run the same deploy script on Ethereum mainnet:
+   - `forge script script/Deploy.s.sol --rpc-url $MAINNET_RPC --broadcast --verify --account deployer`
 2. Verify source on Etherscan mainnet.
-3. Set final `baseURI` if it differs from deploy-time value.
+3. Confirm `baseURI` matches the pinned metadata folder CID.
 4. Transfer ownership to the client wallet:
    - `transferOwnership(<client-address>)`
 5. Withdraw any test ETH left in the contract before ownership transfer.
@@ -298,7 +305,7 @@ NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=...
 - All admin functions restricted by `onlyOwner`.
 - Minting blocked by `Pausable` in emergencies.
 - No arbitrary external calls during `withdraw`.
-- `mintPrice` math uses integer arithmetic; frontend displays rounded value.
+- Mint price is a fixed `0.04 ether` constant; frontend reads `MINT_PRICE` from the contract.
 - Metadata pinned before `baseURI` is set so no broken links at launch.
 - Contract ownership transferred to the client after mainnet deployment.
 
@@ -310,7 +317,7 @@ NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=...
 |----------|---------------|
 | Hosting provider | Client to choose before launch; Vercel recommended |
 | Client wallet address | Required before mainnet ownership transfer |
-| Final mint price | `1 ether / 21`; owner can adjust via `setMintPrice` before launch |
+| Final mint price | `0.04 ether` per token (fixed) |
 | External URL in metadata | Add project website URL if one exists |
 
 ---
@@ -335,5 +342,5 @@ NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=...
 - [ ] Frontend mints a token on Sepolia and displays correct metadata.
 - [ ] Contract deploys on Ethereum mainnet and is verified on Etherscan.
 - [ ] Ownership is transferred to the client wallet.
-- [ ] Minting 21 tokens at `1 ether / 21` each fills the total supply and sends ~1 ETH to the contract.
+- [ ] Minting 21 tokens at `0.04 ether` each fills the total supply and sends `0.84 ETH` to the contract.
 - [ ] OpenSea/Blur renders collection metadata and royalty info correctly.
