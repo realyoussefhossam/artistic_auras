@@ -134,7 +134,7 @@ The original CSV `tokenID` is preserved in `out/metadata-Files.cleaned.csv` (col
 
 ### 7.1 Dependencies
 
-- `openzeppelin-contracts` v5.x: `ERC721`, `ERC721Pausable`, `ERC2981`, `Ownable`.
+- `openzeppelin-contracts` v5.x: `ERC721`, `ERC721Pausable`, `ERC2981`, `Ownable`, `ReentrancyGuard`.
 - Foundry for compilation, testing, and deployment scripts.
 - Solidity `^0.8.27`.
 
@@ -159,9 +159,11 @@ Token IDs are sequential `1`–`21`, mapping directly to `metadata/<id>.json`.
 
 - `mint(uint256 quantity) payable`
   - Reverts with `"Public sale is not active"` if `publicSaleActive` is false.
-  - Reverts with `"Insufficient payment"` if `msg.value < quantity * MINT_PRICE`.
+  - Reverts with `"Quantity must be greater than zero"` if `quantity == 0`.
+  - Reverts with `"Incorrect payment amount"` if `msg.value != quantity * MINT_PRICE`.
   - Reverts with `"Max supply reached"` if `_tokenIds + quantity > MAX_SUPPLY`.
   - Reverts with `EnforcedPause()` when the contract is paused.
+  - Protected by `nonReentrant` to prevent `_safeMint` callback exploits.
   - Mints sequential token IDs to `msg.sender`.
 
 ### 7.5 Owner functions
@@ -171,8 +173,8 @@ Token IDs are sequential `1`–`21`, mapping directly to `metadata/<id>.json`.
 - `setDefaultRoyalty(address receiver, uint96 feeNumerator)` — update default royalty (basis points).
 - `setTokenRoyalty(uint256 tokenId, address receiver, uint96 feeNumerator)` — set per-token royalty override.
 - `pause()` / `unpause()` — emergency pause inherited from OpenZeppelin `ERC721Pausable`; blocks all transfers and mints while paused.
-- `mintToAddress(address to, uint256 quantity)` — owner-only reserve mint, bypasses sale state and payment.
-- `withdraw()` — sends the full contract ETH balance to `owner()`.
+- `mintToAddress(address to, uint256 quantity)` — owner-only reserve mint, bypasses sale state and payment; protected by `nonReentrant`.
+- `withdraw()` — sends the full contract ETH balance to `owner()`; protected by `nonReentrant`.
 - `transferOwnership(address newOwner)` — inherited from OpenZeppelin `Ownable`.
 
 ### 7.6 Royalties
@@ -183,13 +185,15 @@ Use OpenZeppelin `ERC2981`. Constructor calls `_setDefaultRoyalty(owner(), 500)`
 
 String-based require reverts:
 - `"Public sale is not active"`
-- `"Insufficient payment"`
+- `"Quantity must be greater than zero"`
+- `"Incorrect payment amount"`
 - `"Max supply reached"`
 - `"No funds to withdraw"`
 - `"Withdrawal failed"`
 
 OpenZeppelin built-in:
 - `EnforcedPause()` when transfers/mints are paused.
+- `ReentrancyGuardReentrantCall()` for reentrant calls.
 
 ### 7.8 Token URI
 

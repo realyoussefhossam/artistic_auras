@@ -5,9 +5,10 @@ import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {ERC721Pausable} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol";
 import {ERC2981} from "@openzeppelin/contracts/token/common/ERC2981.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
-contract ArtisticAuras is ERC721, ERC721Pausable, ERC2981, Ownable {
+contract ArtisticAuras is ERC721, ERC721Pausable, ERC2981, Ownable, ReentrancyGuard {
     using Strings for uint256;
 
     uint256 private _tokenIds;
@@ -32,8 +33,9 @@ contract ArtisticAuras is ERC721, ERC721Pausable, ERC2981, Ownable {
         _;
     }
 
-    function mint(uint256 quantity) external payable whenNotPaused whenPublicSaleActive {
-        require(msg.value >= MINT_PRICE * quantity, "Insufficient payment");
+    function mint(uint256 quantity) external payable whenNotPaused whenPublicSaleActive nonReentrant {
+        require(quantity > 0, "Quantity must be greater than zero");
+        require(msg.value == MINT_PRICE * quantity, "Incorrect payment amount");
         require(_tokenIds + quantity <= MAX_SUPPLY, "Max supply reached");
 
         for (uint256 i = 0; i < quantity; i++) {
@@ -43,7 +45,7 @@ contract ArtisticAuras is ERC721, ERC721Pausable, ERC2981, Ownable {
         }
     }
 
-    function mintToAddress(address to, uint256 quantity) external onlyOwner {
+    function mintToAddress(address to, uint256 quantity) external onlyOwner nonReentrant {
         require(_tokenIds + quantity <= MAX_SUPPLY, "Max supply reached");
 
         for (uint256 i = 0; i < quantity; i++) {
@@ -77,7 +79,7 @@ contract ArtisticAuras is ERC721, ERC721Pausable, ERC2981, Ownable {
         _unpause();
     }
 
-    function withdraw() external onlyOwner {
+    function withdraw() external onlyOwner nonReentrant {
         uint256 balance = address(this).balance;
         require(balance > 0, "No funds to withdraw");
 
@@ -98,12 +100,7 @@ contract ArtisticAuras is ERC721, ERC721Pausable, ERC2981, Ownable {
         return string(abi.encodePacked(_baseURI(), tokenId.toString(), ".json"));
     }
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(ERC721, ERC2981)
-        returns (bool)
-    {
+    function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC2981) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 
