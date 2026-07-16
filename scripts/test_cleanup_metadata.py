@@ -21,8 +21,8 @@ def test_cleanup_generates_21_jsons_and_token_ids(tmp_path):
     token_ids = json.loads((out_dir / "token_ids.json").read_text())["tokenIds"]
     assert len(token_ids) == 21
     assert len(sorted(metadata_dir.glob("*.json"))) == 21
-    assert token_ids[0] == 6
-    assert token_ids[-1] == 443
+    assert token_ids[0] == 1
+    assert token_ids[-1] == 21
 
 
 def test_cleanup_generates_gallery_token_list(tmp_path):

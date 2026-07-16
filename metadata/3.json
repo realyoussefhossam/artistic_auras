@@ -1,0 +1,35 @@
+{
+  "name": "Artistic-Auras #10",
+  "description": "An abstract visualization of a powerful cosmic vortex, swirling with vibrant energy at the center of the composition. Warm shades of orange and yellow mix with cool blues and grays, creating a dynamic sense of motion. The central vortex appears to pull in celestial bodies, represented by orbs and planetary shapes, into its gravitational whirlpool. The contrasting dark and light elements reflect the balance between chaos and order in the universe. This piece captures the immense power and mystery of galactic phenomena.",
+  "image": "ipfs://QmeySLQ3Zt5sSfZYvBuxEHvCSQyYAKmD4eYQxDmkGwcBwH",
+  "attributes": [
+    {
+      "trait_type": "Color Scheme",
+      "value": "Orange, Yellow, Blue, Black, Gray"
+    },
+    {
+      "trait_type": "Energy Source",
+      "value": "Galactic Vortex"
+    },
+    {
+      "trait_type": "Element",
+      "value": "Cosmic Swirl, Celestial Orbs"
+    },
+    {
+      "trait_type": "Form",
+      "value": "Spiral Energy, Gravitational Pull"
+    },
+    {
+      "trait_type": "Mood",
+      "value": "Chaotic, Powerful, Mystical"
+    },
+    {
+      "trait_type": "Theme",
+      "value": "Galactic Energy, Cosmic Balance, Celestial Movement"
+    },
+    {
+      "trait_type": "Movement",
+      "value": "Abstract Expressionism"
+    }
+  ]
+}

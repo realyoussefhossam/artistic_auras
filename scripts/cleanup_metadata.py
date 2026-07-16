@@ -34,6 +34,10 @@ def cleanup(csv_path: Path, image_dir: Path, out_dir: Path, metadata_dir: Path) 
     out_dir.mkdir(parents=True, exist_ok=True)
     metadata_dir.mkdir(parents=True, exist_ok=True)
 
+    # Clear any previously generated metadata JSONs so IDs stay clean.
+    for stale in metadata_dir.glob("*.json"):
+        stale.unlink()
+
     rows = []
     with csv_path.open(newline="", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f, skipinitialspace=True)
@@ -44,10 +48,10 @@ def cleanup(csv_path: Path, image_dir: Path, out_dir: Path, metadata_dir: Path) 
     cleaned_rows = []
     token_list = []
 
-    for row in rows:
-        token_id_str = row["tokenID"].strip()
-        token_id = int(token_id_str)
-        token_ids.append(token_id)
+    for index, row in enumerate(rows, start=1):
+        sequential_id = index
+        token_ids.append(sequential_id)
+        original_token_id = row["tokenID"].strip()
 
         original_file = row["file_name"].strip()
         name = row["name"].strip()
@@ -77,11 +81,12 @@ def cleanup(csv_path: Path, image_dir: Path, out_dir: Path, metadata_dir: Path) 
             "attributes": attributes,
         }
 
-        json_path = metadata_dir / f"{token_id}.json"
+        json_path = metadata_dir / f"{sequential_id}.json"
         json_path.write_text(json.dumps(metadata, indent=2), encoding="utf-8")
 
         cleaned_row = {
-            "tokenID": token_id_str,
+            "sequential_id": sequential_id,
+            "original_token_id": original_token_id,
             "name": name,
             "description": description,
             "file_name": normalized_file,
@@ -91,7 +96,7 @@ def cleanup(csv_path: Path, image_dir: Path, out_dir: Path, metadata_dir: Path) 
 
         token_list.append(
             {
-                "tokenId": token_id,
+                "tokenId": sequential_id,
                 "name": name,
                 "image": metadata["image"],
             }
@@ -110,7 +115,8 @@ def cleanup(csv_path: Path, image_dir: Path, out_dir: Path, metadata_dir: Path) 
         writer = csv.DictWriter(
             f,
             fieldnames=[
-                "tokenID",
+                "sequential_id",
+                "original_token_id",
                 "name",
                 "description",
                 "file_name",

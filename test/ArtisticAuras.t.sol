@@ -5,51 +5,98 @@ import "forge-std/Test.sol";
 import {ArtisticAuras} from "../src/ArtisticAuras.sol";
 
 contract ArtisticAurasTest is Test {
-    ArtisticAuras public artisticauras;
+    ArtisticAuras public artisticAuras;
     address public owner;
     address public user1;
     address public user2;
-    address public user3;
 
+    string public constant BASE_URI = "ipfs://QmTest/";
     uint256 public constant MINT_PRICE = 0.04 ether;
     uint256 public constant MAX_SUPPLY = 21;
 
-    event NFTMinted(address indexed to, uint256 indexed _tokenId, string tokenURI);
+    event NFTMinted(address indexed to, uint256 indexed tokenId);
 
     function setUp() public {
         owner = makeAddr("owner");
         user1 = makeAddr("user1");
         user2 = makeAddr("user2");
-        user3 = makeAddr("user3");
 
         vm.startPrank(owner);
-        artisticauras = new ArtisticAuras();
+        artisticAuras = new ArtisticAuras(BASE_URI);
         vm.stopPrank();
     }
 
     function test_Constructor() public view {
-        assertEq(artisticauras.name(), "Artistic Auras");
-        assertEq(artisticauras.symbol(), "AURA");
-        assertEq(artisticauras.owner(), owner);
-        assertEq(artisticauras.MAX_SUPPLY(), MAX_SUPPLY);
-        assertEq(artisticauras.MINT_PRICE(), MINT_PRICE);
-        assertEq(artisticauras.maxMintPerAddress(), 1);
+        assertEq(artisticAuras.name(), "Artistic Auras");
+        assertEq(artisticAuras.symbol(), "AURA");
+        assertEq(artisticAuras.owner(), owner);
+        assertEq(artisticAuras.MAX_SUPPLY(), MAX_SUPPLY);
+        assertEq(artisticAuras.MINT_PRICE(), MINT_PRICE);
+        assertEq(artisticAuras.maxMintPerAddress(), 1);
     }
 
     function test_Mint() public {
-        string memory tokenURI = "ipfs://example_token_uri";
-
         vm.deal(user1, MINT_PRICE);
+
         vm.startPrank(user1);
         vm.expectEmit(true, true, true, true);
-        emit NFTMinted(user1, 1, tokenURI);
+        emit NFTMinted(user1, 1);
 
-        artisticauras.mint{value: MINT_PRICE}(tokenURI);
+        artisticAuras.mint{value: MINT_PRICE}(1);
         vm.stopPrank();
 
-        assertEq(artisticauras.ownerOf(1), user1);
-        assertEq(artisticauras.tokenURI(1), tokenURI);
-        assertEq(artisticauras.getTotalSupply(), 1);
-        assertEq(artisticauras.mintedCount(user1), 1);
+        assertEq(artisticAuras.ownerOf(1), user1);
+        assertEq(artisticAuras.tokenURI(1), string.concat(BASE_URI, "1.json"));
+        assertEq(artisticAuras.getTotalSupply(), 1);
+        assertEq(artisticAuras.mintedCount(user1), 1);
+    }
+
+    function test_MintRevertsWithInsufficientPayment() public {
+        vm.deal(user1, MINT_PRICE);
+
+        vm.startPrank(user1);
+        vm.expectRevert("Insufficient payment");
+        artisticAuras.mint{value: MINT_PRICE - 1}(1);
+        vm.stopPrank();
+    }
+
+    function test_MintRevertsWhenMaxMintPerAddressReached() public {
+        vm.deal(user1, MINT_PRICE * 2);
+
+        vm.startPrank(user1);
+        artisticAuras.mint{value: MINT_PRICE}(1);
+        vm.expectRevert("Max mint per address reached");
+        artisticAuras.mint{value: MINT_PRICE}(1);
+        vm.stopPrank();
+    }
+
+    function test_MintToAddressByOwner() public {
+        vm.startPrank(owner);
+        artisticAuras.mintToAddress(user2, 1);
+        vm.stopPrank();
+
+        assertEq(artisticAuras.ownerOf(1), user2);
+        assertEq(artisticAuras.mintedCount(user2), 0);
+    }
+
+    function test_MintToAddressRevertsForNonOwner() public {
+        vm.startPrank(user1);
+        vm.expectRevert();
+        artisticAuras.mintToAddress(user2, 1);
+        vm.stopPrank();
+    }
+
+    function test_Withdraw() public {
+        vm.deal(user1, MINT_PRICE);
+        vm.prank(user1);
+        artisticAuras.mint{value: MINT_PRICE}(1);
+
+        uint256 balanceBefore = owner.balance;
+
+        vm.prank(owner);
+        artisticAuras.withdraw();
+
+        assertEq(owner.balance, balanceBefore + MINT_PRICE);
+        assertEq(address(artisticAuras).balance, 0);
     }
 }

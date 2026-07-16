@@ -1,0 +1,35 @@
+{
+  "name": "Artistic-Auras #14",
+  "description": "An abstract portrayal of cosmic energy and creation, centered around a radiant, sun-like orb. Surrounding the core are swirling waves of dark red and black, alongside clusters of spherical forms that resemble planets or celestial bodies. The flowing energy gives the impression of cosmic forces in motion, with a blend of warmth and mystery. The juxtaposition of light and shadow suggests the birth of new worlds or the flow of energy throughout the universe, blending themes of creation, destruction, and renewal.",
+  "image": "ipfs://QmXgqYmGioEaGdrsLPtdy4LFR4S8FjR6mKzAQwUANDiFtD",
+  "attributes": [
+    {
+      "trait_type": "Color Scheme",
+      "value": "Beige, Black, Red, Orange, Yellow"
+    },
+    {
+      "trait_type": "Energy Source",
+      "value": "Radiant Core"
+    },
+    {
+      "trait_type": "Element",
+      "value": "Cosmic Spheres, Flowing Energy"
+    },
+    {
+      "trait_type": "Form",
+      "value": "Swirling Waves, Orbital Motion"
+    },
+    {
+      "trait_type": "Mood",
+      "value": "Mystical, Expansive, Cosmic"
+    },
+    {
+      "trait_type": "Theme",
+      "value": "Creation, Cosmic Flow, Celestial Forces"
+    },
+    {
+      "trait_type": "Movement",
+      "value": "Abstract Expressionism"
+    }
+  ]
+}

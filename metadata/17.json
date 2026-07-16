@@ -1,35 +1,35 @@
 {
-  "name": "Artistic-Auras #17",
-  "description": "An abstract cosmic landscape featuring dynamic cracks in space, intertwining with celestial bodies and glowing orbs. The composition suggests an energetic disruption in the cosmos, with vibrant red and orange spheres floating amidst black, root-like tendrils that seem to both connect and fracture the space. The use of light and dark creates an energetic contrast, symbolizing the balance between chaos and harmony in the universe. The vibrant hues and bold geometric elements evoke a sense of cosmic evolution and celestial conflict.",
-  "image": "ipfs://QmebjdN1iUw6SwDesQb4CyL6gknGk2ytf6FKfvGHCPEp23",
+  "name": "Artistic-Auras #92",
+  "description": "This abstract artwork represents a cosmic scene where a central glowing orb emits radiant energy waves through intertwining black and dark energy streams. The black and fiery orange swirls appear to encapsulate the celestial orbs, suggesting the formation or collapse of a star or cosmic entity. The use of light contrasts with the darker, shadowy tendrils extending outward, and soft geometric shapes fade into the background. Dripping textures along the lower section contribute to a sense of decay or transformation. The image gives off a blend of chaos and order, encapsulating the cycle of cosmic events.",
+  "image": "ipfs://QmWsReQaPWeCUXiNd4mHVbdWitX7VuMMg9WXKW1xZobHiu",
   "attributes": [
     {
       "trait_type": "Color Scheme",
-      "value": "Black, White, Red, Orange, Yellow"
+      "value": "Black, White, Grey, Fiery Orange, Yellow, Light Beige"
     },
     {
       "trait_type": "Energy Source",
-      "value": "Celestial Orbs"
+      "value": "Radiant Star or Energy Orb, Cosmic Tendrils, Dripping Shadows, Abstract Planets, Geometric Forms"
     },
     {
       "trait_type": "Element",
-      "value": "Cracked Space, Planetary Spheres"
+      "value": "Light and Dark Energy Streams, Radiant Central Glow, Geometric Patterns in the Background, Dripping Shadows"
     },
     {
       "trait_type": "Form",
-      "value": "Fractured Energy, Spherical Orbits"
+      "value": "Circular, Twisting, Flowing, Dynamic"
     },
     {
       "trait_type": "Mood",
-      "value": "Dynamic, Chaotic, Expansive"
+      "value": "Mysterious, Chaotic, Energetic, Transformative"
     },
     {
       "trait_type": "Theme",
-      "value": "Cosmic Disruption, Energy Flow, Balance of Forces"
+      "value": "Cosmic Forces, Energy Fields, Creation, Destruction, Universal Balance"
     },
     {
       "trait_type": "Movement",
-      "value": "Abstract Expressionism"
+      "value": "Expanding Energy, Twisting Motion, Flow of Cosmic Forces"
     }
   ]
 }

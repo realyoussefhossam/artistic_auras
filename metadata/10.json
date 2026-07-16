@@ -1,35 +1,35 @@
 {
-  "name": "Artistic-Auras #10",
-  "description": "An abstract visualization of a powerful cosmic vortex, swirling with vibrant energy at the center of the composition. Warm shades of orange and yellow mix with cool blues and grays, creating a dynamic sense of motion. The central vortex appears to pull in celestial bodies, represented by orbs and planetary shapes, into its gravitational whirlpool. The contrasting dark and light elements reflect the balance between chaos and order in the universe. This piece captures the immense power and mystery of galactic phenomena.",
-  "image": "ipfs://QmeySLQ3Zt5sSfZYvBuxEHvCSQyYAKmD4eYQxDmkGwcBwH",
+  "name": "Artistic-Auras #39",
+  "description": "An abstract representation of a cosmic peak, with a radiant sun emerging from the summit of a towering mountain. The composition features sharp angular elements and orbs, symbolizing celestial bodies, all converging towards the central sun, which emits dynamic rays of energy. The mountain appears to stretch upward as if channeling the cosmic energy from below to the celestial core above. Earth tones of beige and black blend with fiery oranges and yellows, conveying a sense of unity between the terrestrial and the cosmic. The piece evokes themes of ascension, enlightenment, and the power of the natural world in harmony with the universe.",
+  "image": "ipfs://QmcJhazfbZpzJHCPNUrSGnZCkE4s8XWaReQmKWQC4kgaWw",
   "attributes": [
     {
       "trait_type": "Color Scheme",
-      "value": "Orange, Yellow, Blue, Black, Gray"
+      "value": "Beige, Black, Orange, Yellow"
     },
     {
       "trait_type": "Energy Source",
-      "value": "Galactic Vortex"
+      "value": "Central Sun"
     },
     {
       "trait_type": "Element",
-      "value": "Cosmic Swirl, Celestial Orbs"
+      "value": "Mountain, Radiating Energy, Celestial Orbs"
     },
     {
       "trait_type": "Form",
-      "value": "Spiral Energy, Gravitational Pull"
+      "value": "Geometric Shapes, Cosmic Rays, Vertical Ascent"
     },
     {
       "trait_type": "Mood",
-      "value": "Chaotic, Powerful, Mystical"
+      "value": "Powerful, Majestic, Enlightening"
     },
     {
       "trait_type": "Theme",
-      "value": "Galactic Energy, Cosmic Balance, Celestial Movement"
+      "value": "Cosmic Ascension, Connection Between Earth and Sky"
     },
     {
       "trait_type": "Movement",
-      "value": "Abstract Expressionism"
+      "value": "Abstract Expressionism, Cosmic Surrealism"
     }
   ]
 }

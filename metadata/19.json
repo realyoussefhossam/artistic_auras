@@ -1,35 +1,35 @@
 {
-  "name": "Artistic-Auras #19",
-  "description": "An abstract and surreal depiction of a serpent-like form coiling through space and time, surrounded by dynamic energy bursts and celestial elements. The central figure, adorned with sharp, geometric shapes and rich reds and blacks, seems to ripple through the canvas, symbolizing both danger and creation. The composition blends organic and cosmic themes, with cracks of energy radiating outward, intertwining with orbs and geometric forms. The artwork suggests the eternal passage of time and the cyclical nature of existence.",
-  "image": "ipfs://QmXmi6XMvWcpwucYYxk1kZuMFk75tmPnKDyNdCRySN23vD",
+  "name": "Artistic-Auras #120",
+  "description": "An abstract exploration of cosmic forces, depicting planets or celestial bodies in alignment. The bold orbs of yellow, red, and teal seem to float in a void-like space, connected by thin lines of energy and surrounded by splashes of vibrant color. The dark background creates a stark contrast, emphasizing the glow and energy of the central elements. The image evokes themes of celestial balance, cosmic connections, and the mysteries of space.",
+  "image": "ipfs://QmdGVV9wGm2QtiDCqeXQpJi47DYkfRp9cZ5KjWZw9qYt25",
   "attributes": [
     {
       "trait_type": "Color Scheme",
-      "value": "Black, Red, Beige, Orange, Green"
+      "value": "Black, Yellow, Red, Teal, Orange"
     },
     {
       "trait_type": "Energy Source",
-      "value": "Serpent Figure"
+      "value": "Celestial Bodies, Planetary Alignment"
     },
     {
       "trait_type": "Element",
-      "value": "Cosmic Orbs, Geometric Shapes"
+      "value": "Planets, Orbs, Energetic Lines"
     },
     {
       "trait_type": "Form",
-      "value": "Coiling Serpent, Energy Cracks"
+      "value": "Spherical, Floating, Circular Motion"
     },
     {
       "trait_type": "Mood",
-      "value": "Mystical, Powerful, Eternal"
+      "value": "Mystical, Contemplative, Cosmic"
     },
     {
       "trait_type": "Theme",
-      "value": "Time, Cosmic Forces, Eternal Cycle"
+      "value": "Space, Cosmic Balance, Energy, Alignment"
     },
     {
       "trait_type": "Movement",
-      "value": "Abstract Expressionism"
+      "value": "Abstract Expressionism, Cosmic Art"
     }
   ]
 }

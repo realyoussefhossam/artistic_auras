@@ -1,35 +1,35 @@
 {
-  "name": "Artistic-Auras #8",
-  "description": "An abstract depiction of cosmic energy streams converging beneath a radiant celestial orb. Vibrant waves of blue, red, and golden hues flow from the center of the composition, symbolizing the interconnectedness of celestial forces. The central orb, reminiscent of a sun or planetary core, casts light and energy into the surrounding space. The piece evokes movement, creation, and cosmic balance, with organic, flowing forms representing the perpetual flow of energy across the universe.",
-  "image": "ipfs://QmXL6rbv4h7kFjBSCqAkpYMTSqvtVjiLAGTTc31rosxFn1",
+  "name": "Artistic-Auras #33",
+  "description": "An abstract depiction of the explosive force of creation, represented by a volcanic eruption of vibrant, swirling energy. At the center of the composition, circular forms resembling celestial orbs rise from a dark volcanic base, radiating fiery hues of orange, red, and yellow. The dynamic shapes suggest both creation and destruction, with swirling tendrils of energy flowing upward, symbolizing cosmic cycles and transformation. The contrast between the vibrant energy and the darker, grounding elements reflects the balance of power and calm, creation and dissolution.",
+  "image": "ipfs://QmTRhUorSZ4GeSjytsSuG2SuiMxDAX6gSoXRsgK6iz3Prx",
   "attributes": [
     {
       "trait_type": "Color Scheme",
-      "value": "Blue, Red, Yellow, Gold, Orange"
+      "value": "Orange, Red, Yellow, Black, Green"
     },
     {
       "trait_type": "Energy Source",
-      "value": "Celestial Orb"
+      "value": "Volcanic Core"
     },
     {
       "trait_type": "Element",
-      "value": "Cosmic Energy Streams"
+      "value": "Fiery Orbs, Swirling Tendrils"
     },
     {
       "trait_type": "Form",
-      "value": "Flowing, Organic Tendrils"
+      "value": "Circular Energy, Erupting Force"
     },
     {
       "trait_type": "Mood",
-      "value": "Dynamic, Energetic, Mystical"
+      "value": "Dynamic, Fiery, Transformative"
     },
     {
       "trait_type": "Theme",
-      "value": "Cosmic Flow, Energy, Creation"
+      "value": "Creation and Destruction, Cosmic Energy, Transformation"
     },
     {
       "trait_type": "Movement",
-      "value": "Abstract Expressionism"
+      "value": "Abstract Expressionism, Cosmic Surrealism"
     }
   ]
 }
