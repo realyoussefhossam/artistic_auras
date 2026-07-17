@@ -24,6 +24,7 @@ contract ArtisticAuras is ERC721, ERC721Pausable, ERC2981, Ownable, ReentrancyGu
     bool public publicSaleActive;
 
     string private _baseTokenURI;
+    string private _contractURI;
 
     event NFTMinted(address indexed to, uint256 indexed tokenId);
     event BaseURIUpdated(string baseURI);
@@ -35,6 +36,7 @@ contract ArtisticAuras is ERC721, ERC721Pausable, ERC2981, Ownable, ReentrancyGu
     /// @param baseURI The IPFS folder URI ending with `/` that contains `1.json`..`21.json`.
     constructor(string memory baseURI) ERC721("Artistic Auras", "AURA") Ownable(msg.sender) {
         _baseTokenURI = baseURI;
+        _contractURI = string(abi.encodePacked(baseURI, "contract_metadata.json"));
         _setDefaultRoyalty(owner(), ROYALTY_BASIS_POINTS);
     }
 
@@ -129,6 +131,12 @@ contract ArtisticAuras is ERC721, ERC721Pausable, ERC2981, Ownable, ReentrancyGu
     /// @return The current total minted supply.
     function getTotalSupply() external view returns (uint256) {
         return _tokenIds;
+    }
+
+    /// @notice Returns the collection-level metadata URI used by marketplaces.
+    /// @return The URI pointing to the contract metadata JSON.
+    function contractURI() external view returns (string memory) {
+        return _contractURI;
     }
 
     /// @dev Returns the base URI set via `setBaseURI`.

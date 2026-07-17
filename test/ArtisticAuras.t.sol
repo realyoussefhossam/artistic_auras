@@ -410,4 +410,9 @@ contract ArtisticAurasTest is Test {
         vm.prank(owner);
         artisticAuras.withdraw();
     }
+
+    function test_ContractURIReturnsMetadataURI() public view {
+        string memory expected = string(abi.encodePacked(BASE_URI, "contract_metadata.json"));
+        assertEq(artisticAuras.contractURI(), expected);
+    }
 }

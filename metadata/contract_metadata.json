@@ -1,0 +1,8 @@
+{
+  "name": "Artistic Auras",
+  "description": "A 21-piece abstract NFT collection capturing cosmic energy, organic forms, and vibrant expressionism on Ethereum.",
+  "image": "ipfs://Qmf2zhNyuDCzg9F6a5JW9rtyYhMTWSfkWj9DDKLkgAmGmR",
+  "external_link": "https://github.com/realyoussefhossam/artistic_auras",
+  "seller_fee_basis_points": 500,
+  "fee_recipient": "0x44941d655615d5F3A3E91190D8AeE7B6AD98aCFB"
+}
