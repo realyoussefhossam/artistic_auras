@@ -1,4 +1,5 @@
 import json
+import shutil
 from pathlib import Path
 
 import pytest
@@ -8,12 +9,20 @@ from cleanup_metadata import cleanup
 ROOT = Path(__file__).parent.parent
 
 
+def _copy_image_dir(target: Path) -> Path:
+    src = ROOT / "special" / "special"
+    dst = target / "special"
+    shutil.copytree(src, dst)
+    return dst
+
+
 def test_cleanup_generates_21_jsons_and_token_ids(tmp_path):
+    image_dir = _copy_image_dir(tmp_path)
     out_dir = tmp_path / "out"
     metadata_dir = tmp_path / "metadata"
     cleanup(
         csv_path=ROOT / "metadata-Files.csv",
-        image_dir=ROOT / "special" / "special",
+        image_dir=image_dir,
         out_dir=out_dir,
         metadata_dir=metadata_dir,
     )
@@ -26,11 +35,12 @@ def test_cleanup_generates_21_jsons_and_token_ids(tmp_path):
 
 
 def test_cleanup_generates_gallery_token_list(tmp_path):
+    image_dir = _copy_image_dir(tmp_path)
     out_dir = tmp_path / "out"
     metadata_dir = tmp_path / "metadata"
     cleanup(
         csv_path=ROOT / "metadata-Files.csv",
-        image_dir=ROOT / "special" / "special",
+        image_dir=image_dir,
         out_dir=out_dir,
         metadata_dir=metadata_dir,
     )
@@ -41,16 +51,17 @@ def test_cleanup_generates_gallery_token_list(tmp_path):
 
 
 def test_cleanup_renames_images_to_lowercase_png(tmp_path):
+    image_dir = _copy_image_dir(tmp_path)
     out_dir = tmp_path / "out"
     metadata_dir = tmp_path / "metadata"
     cleanup(
         csv_path=ROOT / "metadata-Files.csv",
-        image_dir=ROOT / "special" / "special",
+        image_dir=image_dir,
         out_dir=out_dir,
         metadata_dir=metadata_dir,
     )
 
-    image_files = sorted((ROOT / "special" / "special").glob("*.png"))
+    image_files = sorted(image_dir.glob("*.png"))
     assert len(image_files) == 21
     assert not any(f.suffix != ".png" for f in image_files)
-    assert not any((ROOT / "special" / "special").glob("*.PNG"))
+    assert not any(image_dir.glob("*.PNG"))
