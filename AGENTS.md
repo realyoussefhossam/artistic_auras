@@ -35,11 +35,35 @@ python3 -m pytest scripts/test_cleanup_metadata.py -v
 - Prefer `forge fmt` for Solidity formatting.
 - Python scripts use `pathlib` and target Python 3.10+.
 
+## Deployment readiness
+
+As of the latest changes:
+
+- `forge build`, `forge test -vvv`, and `forge fmt --check` pass.
+- The contract is safe to deploy to **Sepolia under the deployer wallet** for live minting/metadata tests.
+- **Known open issue before ownership transfer:** the default royalty receiver is set to `owner()` in the constructor. If `transferOwnership(newOwner)` is called, royalties continue to accrue to the original deployer until `setDefaultRoyalty(newOwner, 500)` is also called. Fix this before transferring ownership on any network.
+
 ## Deployment
 
-- Set environment variables from `.env.example`.
-- Deploy via cast wallet (recommended): `forge script script/Deploy.s.sol --rpc-url $SEPOLIA_RPC --broadcast --verify --account deployer -vvv`.
-- After mainnet deployment, transfer ownership to the client wallet and verify `baseURI` points to the pinned metadata folder CID.
+1. Set environment variables from `.env` (do not commit it):
+   - `SEPOLIA_RPC`
+   - `ETHERSCAN_API_KEY`
+   - `METADATA_BASE_URI` (must end with `/` and point to the pinned `metadata/` folder)
+2. Ensure the deployer `cast wallet` account exists and is funded with Sepolia ETH:
+   - `cast wallet list`
+   - `cast wallet address --account deployer`
+   - `cast balance <deployer_address> --rpc-url $SEPOLIA_RPC`
+3. Deploy to Sepolia:
+   ```bash
+   source .env
+   forge script script/Deploy.s.sol --rpc-url sepolia --broadcast --verify --account deployer -vvv
+   ```
+4. After deploy, verify:
+   - `publicSaleActive()` is `false` by default.
+   - `baseURI()` matches the pinned metadata folder CID.
+   - OpenSea Sepolia renders the collection metadata.
+5. To open the public sale, call `setPublicSaleActive(true)` from the owner wallet.
+6. **Before transferring ownership:** either fix the royalty-receiver sync bug in the contract or manually call `setDefaultRoyalty(<newOwner>, 500)` immediately after `transferOwnership(<newOwner>)`.
 
 ## Known quirks / guardrails
 
