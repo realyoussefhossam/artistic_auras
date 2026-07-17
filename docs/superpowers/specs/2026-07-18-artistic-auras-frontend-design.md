@@ -10,7 +10,7 @@ A Next.js 14 frontend for the Artistic Auras NFT collection. Three pages: Landin
 
 ## Decisions
 
-- **Repo structure:** Monorepo — frontend lives in `web/` subdir of the existing repo
+- **Repo structure:** Monorepo — frontend lives in `app/` subdir of the existing repo
 - **Networks:** Sepolia + Mainnet from day one, controlled by `NEXT_PUBLIC_CHAIN_ID` env var
 - **Wallet connection:** RainbowKit + wagmi v2 + viem v2
 - **Architecture:** Static pages + client-side contract reads/writes (Approach A)
@@ -27,7 +27,7 @@ artistic_auras/
 ├── script/                     # Deploy scripts (existing)
 ├── scripts/                    # Python metadata scripts (existing)
 ├── metadata/                   # NFT metadata JSONs (existing)
-├── web/                        # Next.js frontend (new)
+├── app/                        # Next.js frontend (new)
 │   ├── app/
 │   │   ├── layout.tsx          # Root layout with providers
 │   │   ├── page.tsx            # Landing page
@@ -79,7 +79,7 @@ artistic_auras/
 
 ## ABI Sharing
 
-A `postinstall` script in `web/package.json` copies the compiled ABI from `../out/ArtisticAuras.sol/ArtisticAuras.json` to `web/lib/abi.json`. No manual sync needed. The script runs automatically on `npm install`.
+A `postinstall` script in `app/package.json` copies the compiled ABI from `../out/ArtisticAuras.sol/ArtisticAuras.json` to `app/lib/abi.json`. No manual sync needed. The script runs automatically on `npm install`.
 
 ## Pages
 
@@ -117,9 +117,9 @@ All admin operations (toggle sale, set base URI, set royalties, pause/unpause, w
 
 ## Contract Integration
 
-### Contract config (`web/lib/contract.ts`)
+### Contract config (`app/lib/contract.ts`)
 
-- ABI imported from `web/lib/abi.json`
+- ABI imported from `app/lib/abi.json`
 - Contract addresses per chain:
   ```ts
   const CONTRACTS = {
@@ -145,7 +145,7 @@ All admin operations (toggle sale, set base URI, set royalties, pause/unpause, w
 |------|----------|-----------|---------|
 | `useMint` | `mint(uint256 quantity)` | Mint page | Public mint, payable 0.04 ETH × qty |
 
-### IPFS metadata fetching (`web/lib/ipfs.ts`)
+### IPFS metadata fetching (`app/lib/ipfs.ts`)
 
 - `tokenURI()` returns `ipfs://<cid>/<id>.json`
 - Convert `ipfs://` to HTTPS gateway: `https://gateway.pinata.cloud/ipfs/<cid>/<id>.json`
