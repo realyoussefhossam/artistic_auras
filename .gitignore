@@ -7,6 +7,8 @@ __pycache__/
 # Commonly ignored directories
 .logs/
 .ignore/
+.DS_Store
+__MACOSX/
 
 # Ignores development broadcast logs
 !/broadcast
