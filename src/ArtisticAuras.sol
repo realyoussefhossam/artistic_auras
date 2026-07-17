@@ -22,6 +22,11 @@ contract ArtisticAuras is ERC721, ERC721Pausable, ERC2981, Ownable, ReentrancyGu
     string private _baseTokenURI;
 
     event NFTMinted(address indexed to, uint256 indexed tokenId);
+    event BaseURIUpdated(string baseURI);
+    event PublicSaleToggled(bool active);
+    event DefaultRoyaltyUpdated(address indexed receiver, uint96 feeNumerator);
+    event TokenRoyaltyUpdated(uint256 indexed tokenId, address indexed receiver, uint96 feeNumerator);
+    event Withdrawal(address indexed to, uint256 amount);
 
     constructor(string memory baseURI) ERC721("Artistic Auras", "AURA") Ownable(msg.sender) {
         _baseTokenURI = baseURI;
@@ -57,18 +62,22 @@ contract ArtisticAuras is ERC721, ERC721Pausable, ERC2981, Ownable, ReentrancyGu
 
     function setBaseURI(string calldata baseURI) external onlyOwner {
         _baseTokenURI = baseURI;
+        emit BaseURIUpdated(baseURI);
     }
 
     function setPublicSaleActive(bool active) external onlyOwner {
         publicSaleActive = active;
+        emit PublicSaleToggled(active);
     }
 
     function setDefaultRoyalty(address receiver, uint96 feeNumerator) external onlyOwner {
         _setDefaultRoyalty(receiver, feeNumerator);
+        emit DefaultRoyaltyUpdated(receiver, feeNumerator);
     }
 
     function setTokenRoyalty(uint256 tokenId, address receiver, uint96 feeNumerator) external onlyOwner {
         _setTokenRoyalty(tokenId, receiver, feeNumerator);
+        emit TokenRoyaltyUpdated(tokenId, receiver, feeNumerator);
     }
 
     function pause() external onlyOwner {
@@ -85,6 +94,8 @@ contract ArtisticAuras is ERC721, ERC721Pausable, ERC2981, Ownable, ReentrancyGu
 
         (bool success,) = payable(owner()).call{value: balance}("");
         require(success, "Withdrawal failed");
+
+        emit Withdrawal(owner(), balance);
     }
 
     function getTotalSupply() external view returns (uint256) {

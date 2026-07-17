@@ -39,6 +39,11 @@ contract ArtisticAurasTest is Test {
     uint256 public constant MAX_SUPPLY = 21;
 
     event NFTMinted(address indexed to, uint256 indexed tokenId);
+    event BaseURIUpdated(string baseURI);
+    event PublicSaleToggled(bool active);
+    event DefaultRoyaltyUpdated(address indexed receiver, uint96 feeNumerator);
+    event TokenRoyaltyUpdated(uint256 indexed tokenId, address indexed receiver, uint96 feeNumerator);
+    event Withdrawal(address indexed to, uint256 amount);
 
     function setUp() public {
         owner = makeAddr("owner");
@@ -352,5 +357,57 @@ contract ArtisticAurasTest is Test {
         artisticAuras.transferFrom(user1, user2, 1);
 
         assertEq(artisticAuras.ownerOf(1), user2);
+    }
+
+    function test_SetBaseURIEmitsEvent() public {
+        string memory newBaseURI = "ipfs://QmNew/";
+
+        vm.expectEmit(false, false, false, true);
+        emit BaseURIUpdated(newBaseURI);
+
+        vm.prank(owner);
+        artisticAuras.setBaseURI(newBaseURI);
+    }
+
+    function test_SetPublicSaleActiveEmitsEvent() public {
+        vm.expectEmit(false, false, false, true);
+        emit PublicSaleToggled(true);
+
+        vm.prank(owner);
+        artisticAuras.setPublicSaleActive(true);
+    }
+
+    function test_SetDefaultRoyaltyEmitsEvent() public {
+        vm.expectEmit(true, false, false, true);
+        emit DefaultRoyaltyUpdated(user2, 1_000);
+
+        vm.prank(owner);
+        artisticAuras.setDefaultRoyalty(user2, 1_000);
+    }
+
+    function test_SetTokenRoyaltyEmitsEvent() public {
+        _enableSale();
+        vm.deal(user1, MINT_PRICE);
+        vm.prank(user1);
+        artisticAuras.mint{value: MINT_PRICE}(1);
+
+        vm.expectEmit(true, true, false, true);
+        emit TokenRoyaltyUpdated(1, user2, 1_000);
+
+        vm.prank(owner);
+        artisticAuras.setTokenRoyalty(1, user2, 1_000);
+    }
+
+    function test_WithdrawEmitsEvent() public {
+        _enableSale();
+        vm.deal(user1, MINT_PRICE);
+        vm.prank(user1);
+        artisticAuras.mint{value: MINT_PRICE}(1);
+
+        vm.expectEmit(true, false, false, true);
+        emit Withdrawal(owner, MINT_PRICE);
+
+        vm.prank(owner);
+        artisticAuras.withdraw();
     }
 }
