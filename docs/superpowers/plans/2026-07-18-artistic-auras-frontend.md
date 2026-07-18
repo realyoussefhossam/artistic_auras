@@ -96,7 +96,7 @@ app/
 **Interfaces:**
 - Produces: a runnable Next.js dev server at `http://localhost:3000` with Tailwind CSS configured and the ABI available at `app/lib/abi.json`
 
-- [ ] **Step 1: Create the Next.js app**
+- [x] **Step 1: Create the Next.js app**
 
 Run from the repo root:
 ```bash
@@ -169,25 +169,25 @@ git commit -m "feat: scaffold Next.js 14 frontend in app/"
 **Interfaces:**
 - Produces: `config.ts` exports `sepolia` and `mainnet` chain configs, `defaultChain` based on env var
 
-- [ ] **Step 1: Install Web3 dependencies**
+- [x] **Step 1: Install Web3 dependencies**
 
 ```bash
 cd app && npm install wagmi@^2 viem@^2 @rainbow-me/rainbowkit@^2
 ```
 
-- [ ] **Step 2: Install shadcn/ui dependencies**
+- [x] **Step 2: Install shadcn/ui dependencies**
 
 ```bash
 cd app && npm install class-variance-authority clsx tailwind-merge lucide-react
 ```
 
-- [ ] **Step 3: Install Framer Motion and Sonner**
+- [x] **Step 3: Install Framer Motion and Sonner**
 
 ```bash
 cd app && npm install framer-motion sonner
 ```
 
-- [ ] **Step 4: Create `lib/utils.ts` for shadcn**
+- [x] **Step 4: Create `lib/utils.ts` for shadcn**
 
 Create `app/lib/utils.ts`:
 
@@ -200,7 +200,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 ```
 
-- [ ] **Step 5: Create `components.json` for shadcn/ui**
+- [x] **Step 5: Create `components.json` for shadcn/ui**
 
 Create `app/components.json`:
 
@@ -269,7 +269,7 @@ const config: Config = {
 export default config
 ```
 
-- [ ] **Step 7: Update `globals.css` with theme variables**
+- [x] **Step 7: Update `globals.css` with theme variables**
 
 Replace `app/app/globals.css` with:
 
@@ -370,7 +370,7 @@ git commit -m "feat: install web3 deps and configure dark theme"
 **Interfaces:**
 - Produces: shadcn/ui components available at `@/components/ui/*`
 
-- [ ] **Step 1: Add shadcn/ui Button component**
+- [x] **Step 1: Add shadcn/ui Button component**
 
 Create `app/components/ui/button.tsx`:
 
@@ -435,7 +435,7 @@ export { Button, buttonVariants }
 cd app && npm install @radix-ui/react-slot @radix-ui/react-dialog @radix-ui/react-tooltip
 ```
 
-- [ ] **Step 3: Add Dialog component**
+- [x] **Step 3: Add Dialog component**
 
 Create `app/components/ui/dialog.tsx`:
 
@@ -533,7 +533,7 @@ export {
 }
 ```
 
-- [ ] **Step 4: Add Input, Badge, Tooltip, and Sonner components**
+- [x] **Step 4: Add Input, Badge, Tooltip, and Sonner components**
 
 Create `app/components/ui/input.tsx`:
 
