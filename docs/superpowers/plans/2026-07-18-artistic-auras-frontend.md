@@ -149,7 +149,7 @@ NEXT_PUBLIC_CHAIN_ID=11155111
 NEXT_PUBLIC_WC_PROJECT_ID=your_walletconnect_project_id
 ```
 
-- [ ] **Step 6: Commit**
+- [ x done ] **Step 6: Commit**
 
 ```bash
 git add app/
