@@ -105,7 +105,7 @@ npx create-next-app@14 app --typescript --tailwind --eslint --app --src-dir=fals
 
 This creates `app/` with Next.js 14, TypeScript, Tailwind, ESLint, App Router, and `@/*` import alias.
 
-- [ ] **Step 2: Verify the scaffold runs**
+- [ x ok server starts and run ] **Step 2: Verify the scaffold runs**
 
 ```bash
 cd app && npm run dev
@@ -113,7 +113,7 @@ cd app && npm run dev
 
 Expected: dev server starts on `http://localhost:3000`, default Next.js page loads.
 
-- [ ] **Step 3: Copy the contract ABI**
+- [ x ok verifyed the abi is now also at app/lib/abi.json ] **Step 3: Copy the contract ABI**
 
 Create `app/lib/abi.json` by copying the ABI from the Foundry output:
 
@@ -123,7 +123,7 @@ cd app && mkdir -p lib && node -e "const fs=require('fs'); const d=JSON.parse(fs
 
 Verify: `cat app/lib/abi.json | head -5` should show JSON starting with `[{`.
 
-- [ ] **Step 4: Add the postinstall script to copy ABI**
+- [ x done ] **Step 4: Add the postinstall script to copy ABI**
 
 Edit `app/package.json` and add to the `scripts` section:
 
@@ -137,7 +137,7 @@ Edit `app/package.json` and add to the `scripts` section:
 
 Keep the existing `dev`, `build`, `start`, `lint` scripts.
 
-- [ ] **Step 5: Create `.env.local.example`**
+- [ x done ] **Step 5: Create `.env.local.example`**
 
 Create `app/.env.local.example`:
 
