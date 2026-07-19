@@ -1,10 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useChainId } from "wagmi";
 import { Header } from "@/components/Header";
 import { NFTCard } from "@/components/NFTCard";
 import { NFTModal } from "@/components/NFTModal";
 import { AURA_NFTS, type AuraNFT } from "@/lib/nfts";
+import { useTotalSupply } from "@/hooks/read/useTotalSupply";
+import { useMintedNFTs, type MintedNFT } from "@/hooks/read/useMintedNFTs";
 
 type Rarity = "Common" | "Rare" | "Epic" | "Legendary";
 
@@ -48,10 +51,36 @@ function getTraits(nft: AuraNFT) {
   };
 }
 
+function getOnChainTraits(nft: MintedNFT) {
+  if (!nft.metadata?.attributes) return {};
+  const colorAttr = nft.metadata.attributes.find(
+    (a) => a.trait_type === "Color Scheme",
+  );
+  const energyAttr = nft.metadata.attributes.find(
+    (a) => a.trait_type === "Energy Source",
+  );
+  return {
+    color: colorAttr?.value,
+    energy: energyAttr?.value,
+  };
+}
+
 export default function GalleryPage() {
+  const chainId = useChainId();
+  const { data: totalSupply } = useTotalSupply(chainId);
+  const { nfts: mintedNfts, isLoading } = useMintedNFTs(
+    totalSupply as bigint | undefined,
+  );
+
   const [selectedTokenId, setSelectedTokenId] = useState<number | null>(null);
 
+  const mintedCount =
+    totalSupply !== undefined && totalSupply !== null ? Number(totalSupply) : 0;
+
   const selectedNft = selectedTokenId !== null ? AURA_NFTS[selectedTokenId] : null;
+  const selectedMinted = mintedNfts.find(
+    (n) => n.tokenId === (selectedTokenId !== null ? selectedTokenId + 1 : -1),
+  );
 
   return (
     <>
@@ -63,6 +92,25 @@ export default function GalleryPage() {
           <div className="glass-panel rounded-xl p-6">
             <h2 className="font-heading text-2xl mb-6 text-on-surface">Filters</h2>
             <div className="flex flex-col gap-6">
+              <div>
+                <h3 className="font-mono text-xs text-outline mb-3 uppercase">
+                  Collection Stats
+                </h3>
+                <div className="flex flex-col gap-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-on-surface-variant">Minted</span>
+                    <span className="font-mono text-on-surface">
+                      {mintedCount} / 21
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-on-surface-variant">Remaining</span>
+                    <span className="font-mono text-primary">
+                      {21 - mintedCount}
+                    </span>
+                  </div>
+                </div>
+              </div>
               <div>
                 <h3 className="font-mono text-xs text-outline mb-3 uppercase">
                   Sort By
@@ -105,20 +153,40 @@ export default function GalleryPage() {
           <h1 className="font-heading text-5xl md:text-7xl mb-8 text-on-surface">
             The Gallery
           </h1>
+          {isLoading && mintedCount > 0 && (
+            <p className="text-on-surface-variant mb-6 font-mono text-sm">
+              Loading on-chain data...
+            </p>
+          )}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {AURA_NFTS.map((nft) => {
               const rarity = RARITY_BY_TOKEN[nft.tokenId] ?? "Common";
-              const traits = getTraits(nft);
+              const isMinted = nft.tokenId <= mintedCount;
+              const minted = mintedNfts.find((m) => m.tokenId === nft.tokenId);
+
+              const traits = minted
+                ? getOnChainTraits(minted)
+                : getTraits(nft);
+
+              const name =
+                minted?.metadata?.name ?? nft.name;
+
               return (
-                <NFTCard
-                  key={nft.tokenId}
-                  tokenId={nft.tokenId}
-                  name={nft.name}
-                  imageUri={nft.image}
-                  rarity={rarity}
-                  traits={traits}
-                  onClick={() => setSelectedTokenId(nft.tokenId - 1)}
-                />
+                <div key={nft.tokenId} className="relative">
+                  <NFTCard
+                    tokenId={nft.tokenId}
+                    name={name}
+                    imageUri={nft.image}
+                    rarity={rarity}
+                    traits={traits}
+                    onClick={() => setSelectedTokenId(nft.tokenId - 1)}
+                  />
+                  {!isMinted && (
+                    <div className="absolute top-2 right-2 z-10 rounded-md bg-black/70 px-2 py-1 font-mono text-xs text-outline backdrop-blur-sm">
+                      Not Minted
+                    </div>
+                  )}
+                </div>
               );
             })}
           </div>
@@ -134,12 +202,22 @@ export default function GalleryPage() {
           selectedNft
             ? {
                 tokenId: selectedNft.tokenId,
-                name: selectedNft.name,
-                description: selectedNft.description,
+                name:
+                  selectedMinted?.metadata?.name ?? selectedNft.name,
+                description:
+                  selectedMinted?.metadata?.description ??
+                  selectedNft.description,
                 imageUri: selectedNft.image,
                 rarity: RARITY_BY_TOKEN[selectedNft.tokenId] ?? "Common",
-                attributes: selectedNft.attributes.map((a, i) => ({
-                  traitType: a.traitType,
+                attributes: (selectedMinted?.metadata?.attributes ??
+                  selectedNft.attributes.map((a) => ({
+                    traitType: a.traitType,
+                    value: a.value,
+                  }))).map((a, i) => ({
+                  traitType:
+                    "traitType" in a
+                      ? a.traitType
+                      : (a as { trait_type: string }).trait_type,
                   value: a.value,
                   colorKey: COLOR_KEYS[i % COLOR_KEYS.length],
                 })),

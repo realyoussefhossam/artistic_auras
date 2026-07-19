@@ -2,15 +2,33 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useChainId } from "wagmi";
 
 import { Header } from "@/components/Header";
 import { MintButton } from "@/components/MintButton";
 import { MintSuccessModal } from "@/components/MintSuccessModal";
+import { useTotalSupply } from "@/hooks/read/useTotalSupply";
+import { useMintPrice } from "@/hooks/read/useMintPrice";
+import { formatEther } from "viem";
 
 export default function MintPage() {
+  const chainId = useChainId();
+  const { data: totalSupply } = useTotalSupply(chainId);
+  const { data: mintPrice } = useMintPrice(chainId);
+
   const [successOpen, setSuccessOpen] = useState(false);
   const [mintedTokenId, setMintedTokenId] = useState<bigint | undefined>();
   const [txHash, setTxHash] = useState<string | undefined>();
+
+  const nextTokenId =
+    totalSupply !== undefined && totalSupply !== null
+      ? Number(totalSupply) + 1
+      : null;
+
+  const priceDisplay =
+    mintPrice !== undefined && mintPrice !== null
+      ? `${formatEther(mintPrice as bigint)} ETH`
+      : "0.04 ETH";
 
   return (
     <>
@@ -37,14 +55,19 @@ export default function MintPage() {
                       Legendary Core
                     </p>
                     <h2 className="font-heading text-2xl text-on-surface">
-                      Genesis Aura #??
+                      Genesis Aura #
+                      {nextTokenId !== null
+                        ? String(nextTokenId).padStart(3, "0")
+                        : "???"}
                     </h2>
                   </div>
                   <div className="text-right">
                     <p className="font-mono text-xs text-on-surface-variant mb-1">
                       Current Mint
                     </p>
-                    <p className="font-heading text-2xl text-on-surface">0.04 ETH</p>
+                    <p className="font-heading text-2xl text-on-surface">
+                      {priceDisplay}
+                    </p>
                   </div>
                 </div>
               </div>
