@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { NFTImage } from "@/components/NFTImage";
+import { SEPOLIA_CONTRACT } from "@/lib/contract";
 import { cn } from "@/lib/utils";
 
 type ColorKey = "primary" | "secondary" | "tertiary" | "outline";
@@ -108,9 +109,16 @@ export function NFTModal({ open, onOpenChange, nft }: NFTModalProps) {
                 </div>
               </div>
             ) : null}
-            <Button variant="default" size="lg" className="mt-2 w-full">
-              View on OpenSea
-            </Button>
+            <a
+              href={`https://testnets.opensea.io/assets/sepolia/${SEPOLIA_CONTRACT}/${nft.tokenId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 w-full"
+            >
+              <Button variant="default" size="lg" className="w-full">
+                View on OpenSea
+              </Button>
+            </a>
           </div>
         </div>
       </DialogContent>
