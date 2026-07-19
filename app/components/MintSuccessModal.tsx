@@ -3,6 +3,8 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2 } from "lucide-react";
+import { useChainId } from "wagmi";
+import { getEtherscanUrl } from "@/lib/contract";
 
 type MintSuccessModalProps = {
   open: boolean;
@@ -17,8 +19,9 @@ export function MintSuccessModal({
   tokenId,
   txHash,
 }: MintSuccessModalProps) {
+  const chainId = useChainId();
   const etherscanUrl = txHash
-    ? `https://sepolia.etherscan.io/tx/${txHash}`
+    ? `${getEtherscanUrl(chainId)}/tx/${txHash}`
     : undefined;
 
   return (

@@ -9,7 +9,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { NFTImage } from "@/components/NFTImage";
-import { SEPOLIA_CONTRACT } from "@/lib/contract";
+import { getOpenSeaAssetUrl, getContractAddress } from "@/lib/contract";
+import { useChainId } from "wagmi";
 import { cn } from "@/lib/utils";
 
 type ColorKey = "primary" | "secondary" | "tertiary" | "outline";
@@ -40,6 +41,7 @@ const colorKeyBorderClasses: Record<ColorKey, string> = {
 };
 
 export function NFTModal({ open, onOpenChange, nft }: NFTModalProps) {
+  const chainId = useChainId();
   const paddedId = nft.tokenId.toString().padStart(3, "0");
 
   return (
@@ -110,7 +112,7 @@ export function NFTModal({ open, onOpenChange, nft }: NFTModalProps) {
               </div>
             ) : null}
             <a
-              href={`https://testnets.opensea.io/assets/sepolia/${SEPOLIA_CONTRACT}/${nft.tokenId}`}
+              href={getOpenSeaAssetUrl(chainId, getContractAddress(chainId), nft.tokenId)}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-2 w-full"
