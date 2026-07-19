@@ -11,13 +11,11 @@ import { Button } from "@/components/ui/button";
 import { NFTImage } from "@/components/NFTImage";
 import { cn } from "@/lib/utils";
 
-type Rarity = "Common" | "Rare" | "Epic" | "Legendary";
 type ColorKey = "primary" | "secondary" | "tertiary" | "outline";
 
 interface NFTAttribute {
   traitType: string;
   value: string;
-  rarityPercent?: string;
   colorKey?: ColorKey;
 }
 
@@ -29,17 +27,9 @@ interface NFTModalProps {
     name: string;
     description: string;
     imageUri: string;
-    rarity?: Rarity;
     attributes?: NFTAttribute[];
   };
 }
-
-const rarityClasses: Record<Rarity, string> = {
-  Common: "text-outline border-outline/30 bg-surface-variant/30",
-  Rare: "text-secondary border-secondary/30 bg-secondary-container/30",
-  Epic: "text-primary border-primary/30 bg-primary-container/30",
-  Legendary: "text-tertiary border-tertiary/30 bg-tertiary-container/30",
-};
 
 const colorKeyBorderClasses: Record<ColorKey, string> = {
   primary: "border-l-primary/50",
@@ -50,7 +40,6 @@ const colorKeyBorderClasses: Record<ColorKey, string> = {
 
 export function NFTModal({ open, onOpenChange, nft }: NFTModalProps) {
   const paddedId = nft.tokenId.toString().padStart(3, "0");
-  const rarity = nft.rarity ?? "Common";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -85,14 +74,6 @@ export function NFTModal({ open, onOpenChange, nft }: NFTModalProps) {
               <DialogTitle className="font-heading text-2xl text-on-surface">
                 {nft.name}
               </DialogTitle>
-              <span
-                className={cn(
-                  "w-fit rounded-md border px-2 py-1 font-mono text-xs",
-                  rarityClasses[rarity],
-                )}
-              >
-                {rarity}
-              </span>
             </DialogHeader>
             {nft.description ? (
               <p className="text-sm leading-relaxed text-on-surface-variant">
@@ -121,11 +102,6 @@ export function NFTModal({ open, onOpenChange, nft }: NFTModalProps) {
                         <div className="mt-1 text-sm text-on-surface">
                           {attr.value}
                         </div>
-                        {attr.rarityPercent ? (
-                          <div className="mt-1 font-mono text-xs text-primary">
-                            {attr.rarityPercent}
-                          </div>
-                        ) : null}
                       </div>
                     );
                   })}

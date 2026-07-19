@@ -1,31 +1,19 @@
 "use client";
 
 import { NFTImage } from "@/components/NFTImage";
-import { cn } from "@/lib/utils";
-
-type Rarity = "Common" | "Rare" | "Epic" | "Legendary";
 
 interface NFTCardProps {
   tokenId: number;
   name: string;
   imageUri: string;
-  rarity?: Rarity;
   traits?: { color?: string; energy?: string };
   onClick?: () => void;
 }
-
-const rarityClasses: Record<Rarity, string> = {
-  Common: "text-outline border-outline/30 bg-surface-variant/30",
-  Rare: "text-secondary border-secondary/30 bg-secondary-container/30",
-  Epic: "text-primary border-primary/30 bg-primary-container/30",
-  Legendary: "text-tertiary border-tertiary/30 bg-tertiary-container/30",
-};
 
 export function NFTCard({
   tokenId,
   name,
   imageUri,
-  rarity = "Common",
   traits,
   onClick,
 }: NFTCardProps) {
@@ -81,14 +69,6 @@ export function NFTCard({
               Aura #{paddedId}
             </span>
           </div>
-          <span
-            className={cn(
-              "rounded-md border px-2 py-1 font-mono text-xs",
-              rarityClasses[rarity],
-            )}
-          >
-            {rarity}
-          </span>
         </div>
       </div>
     </div>

@@ -11,32 +11,6 @@ import { AURA_NFTS, type AuraNFT } from "@/lib/nfts";
 import { useTotalSupply } from "@/hooks/read/useTotalSupply";
 import { useMintedNFTs, type MintedNFT } from "@/hooks/read/useMintedNFTs";
 
-type Rarity = "Common" | "Rare" | "Epic" | "Legendary";
-
-const RARITY_BY_TOKEN: Record<number, Rarity> = {
-  1: "Legendary",
-  2: "Rare",
-  3: "Epic",
-  4: "Common",
-  5: "Rare",
-  6: "Legendary",
-  7: "Epic",
-  8: "Common",
-  9: "Rare",
-  10: "Legendary",
-  11: "Epic",
-  12: "Common",
-  13: "Rare",
-  14: "Legendary",
-  15: "Epic",
-  16: "Common",
-  17: "Rare",
-  18: "Legendary",
-  19: "Epic",
-  20: "Common",
-  21: "Legendary",
-};
-
 const COLOR_KEYS: Array<"primary" | "secondary" | "tertiary" | "outline"> = [
   "primary",
   "tertiary",
@@ -44,7 +18,7 @@ const COLOR_KEYS: Array<"primary" | "secondary" | "tertiary" | "outline"> = [
   "outline",
 ];
 
-type SortOption = "id-asc" | "id-desc" | "rarity-desc" | "recent";
+type SortOption = "id-asc" | "id-desc" | "recent";
 
 function getTraits(nft: AuraNFT) {
   const colorAttr = nft.attributes.find((a) => a.traitType === "Color Scheme");
@@ -68,13 +42,6 @@ function getOnChainTraits(nft: MintedNFT) {
     energy: energyAttr?.value,
   };
 }
-
-const RARITY_ORDER: Record<Rarity, number> = {
-  Legendary: 0,
-  Epic: 1,
-  Rare: 2,
-  Common: 3,
-};
 
 export default function GalleryPage() {
   const chainId = useChainId();
@@ -112,11 +79,6 @@ export default function GalleryPage() {
           return a.tokenId - b.tokenId;
         case "id-desc":
           return b.tokenId - a.tokenId;
-        case "rarity-desc":
-          return (
-            RARITY_ORDER[RARITY_BY_TOKEN[a.tokenId] ?? "Common"] -
-            RARITY_ORDER[RARITY_BY_TOKEN[b.tokenId] ?? "Common"]
-          );
         case "recent":
           return b.tokenId - a.tokenId;
         default:
@@ -217,7 +179,6 @@ export default function GalleryPage() {
                 >
                   <option value="id-asc">ID: Low to High</option>
                   <option value="id-desc">ID: High to Low</option>
-                  <option value="rarity-desc">Rarity: Legendary First</option>
                   <option value="recent">Recently Minted</option>
                 </select>
               </div>
@@ -261,7 +222,6 @@ export default function GalleryPage() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredNfts.map((nft) => {
-                const rarity = RARITY_BY_TOKEN[nft.tokenId] ?? "Common";
                 const isMinted = nft.tokenId <= mintedCount;
                 const minted = mintedNfts.find((m) => m.tokenId === nft.tokenId);
 
@@ -278,7 +238,6 @@ export default function GalleryPage() {
                       tokenId={nft.tokenId}
                       name={name}
                       imageUri={imageUri}
-                      rarity={rarity}
                       traits={traits}
                       onClick={() => setSelectedTokenId(nft.tokenId - 1)}
                     />
@@ -309,7 +268,6 @@ export default function GalleryPage() {
                   selectedMinted?.metadata?.description ??
                   selectedNft.description,
                 imageUri: selectedMinted?.metadata?.image ?? selectedNft.image,
-                rarity: RARITY_BY_TOKEN[selectedNft.tokenId] ?? "Common",
                 attributes: (selectedMinted?.metadata?.attributes ??
                   selectedNft.attributes.map((a) => ({
                     traitType: a.traitType,

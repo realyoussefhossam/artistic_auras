@@ -59,7 +59,7 @@ export default function MintPage() {
                 <div className="flex justify-between items-end">
                   <div>
                     <p className="font-mono text-xs text-primary mb-1 uppercase tracking-wider">
-                      Legendary Core
+                      Next to Mint
                     </p>
                     <h2 className="font-heading text-2xl text-on-surface">
                       Genesis Aura #
