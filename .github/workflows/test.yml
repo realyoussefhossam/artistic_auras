@@ -44,3 +44,28 @@ jobs:
 
       - name: Run Python metadata tests
         run: python3 -m pytest scripts/test_cleanup_metadata.py -v
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: app/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: app
+        run: npm install
+
+      - name: Typecheck frontend
+        working-directory: app
+        run: npx tsc --noEmit
+
+      - name: Lint frontend
+        working-directory: app
+        run: npm run lint
+
+      - name: Build frontend
+        working-directory: app
+        run: npm run build
+        env:
+          NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID }}
