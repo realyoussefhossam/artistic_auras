@@ -9,6 +9,7 @@ import { useMint } from "@/hooks/write/useMint";
 import { usePublicSaleActive } from "@/hooks/read/usePublicSaleActive";
 import { useMintPrice } from "@/hooks/read/useMintPrice";
 import { useMaxSupply } from "@/hooks/read/useMaxSupply";
+import { useTotalSupply } from "@/hooks/read/useTotalSupply";
 
 const MIN_QUANTITY = 1;
 const MAX_QUANTITY = 2;
@@ -25,6 +26,7 @@ export function MintButton({ onSuccess }: MintButtonProps) {
   const { data: saleActive } = usePublicSaleActive(chainId);
   const { data: mintPrice } = useMintPrice(chainId);
   const { data: maxSupply } = useMaxSupply(chainId);
+  const { data: totalSupply } = useTotalSupply(chainId);
 
   const [quantity, setQuantity] = useState<number>(MIN_QUANTITY);
   const confirmedRef = useRef(false);
@@ -35,7 +37,11 @@ export function MintButton({ onSuccess }: MintButtonProps) {
 
   const saleNotActive = saleActive === false;
   const soldOut =
-    maxSupply !== undefined && maxSupply !== null && BigInt(maxSupply as bigint) === BigInt(0);
+    totalSupply !== undefined &&
+    totalSupply !== null &&
+    maxSupply !== undefined &&
+    maxSupply !== null &&
+    BigInt(totalSupply as bigint) >= BigInt(maxSupply as bigint);
 
   const isBusy = isPending || isConfirming;
   const isDisabled =
