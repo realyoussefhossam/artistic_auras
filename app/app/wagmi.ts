@@ -11,24 +11,7 @@ import {
 } from "@rainbow-me/rainbowkit/wallets";
 import type { Transport } from "viem";
 import { createConfig, http } from "wagmi";
-import {
-  mainnet,
-  sepolia,
-  polygon,
-  polygonAmoy,
-  avalanche,
-  avalancheFuji,
-  optimism,
-  optimismSepolia,
-  arbitrum,
-  arbitrumSepolia,
-  linea,
-  lineaSepolia,
-  base,
-  baseSepolia,
-  bsc,
-  bscTestnet,
-} from "wagmi/chains";
+import { mainnet, sepolia } from "wagmi/chains";
 
 const walletConnectProjectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
 
@@ -60,41 +43,10 @@ const connectors = connectorsForWallets(
 const transports: Record<number, Transport> = {
   [mainnet.id]: http(),
   [sepolia.id]: http(),
-  [arbitrum.id]: http(),
-  [arbitrumSepolia.id]: http(),
-  [optimism.id]: http(),
-  [optimismSepolia.id]: http(),
-  [base.id]: http(),
-  [baseSepolia.id]: http(),
-  [polygon.id]: http(),
-  [polygonAmoy.id]: http(),
-  [avalanche.id]: http(),
-  [avalancheFuji.id]: http(),
-  [linea.id]: http(),
-  [lineaSepolia.id]: http(),
-  [bsc.id]: http(),
-  [bscTestnet.id]: http(),
 };
 
 export const wagmiConfig = createConfig({
-  chains: [
-    mainnet,
-    sepolia,
-    arbitrum,
-    arbitrumSepolia,
-    optimism,
-    optimismSepolia,
-    base,
-    baseSepolia,
-    polygon,
-    polygonAmoy,
-    avalanche,
-    avalancheFuji,
-    linea,
-    lineaSepolia,
-    bsc,
-    bscTestnet,
-  ],
+  chains: [mainnet, sepolia],
   connectors,
   transports,
   ssr: true,

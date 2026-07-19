@@ -9,6 +9,7 @@ import { useMint } from "@/hooks/write/useMint";
 import { usePublicSaleActive } from "@/hooks/read/usePublicSaleActive";
 import { useMintPrice } from "@/hooks/read/useMintPrice";
 import { useMaxSupply } from "@/hooks/read/useMaxSupply";
+import { getEtherscanUrl } from "@/lib/contract";
 
 const MIN_QUANTITY = 1;
 const MAX_QUANTITY = 2;
@@ -150,7 +151,7 @@ export function MintButton({ onSuccess }: MintButtonProps) {
 
       {hash && (
         <a
-          href={`https://sepolia.etherscan.io/tx/${hash}`}
+          href={`${getEtherscanUrl(chainId)}/tx/${hash}`}
           target="_blank"
           rel="noopener noreferrer"
           className="text-center font-mono text-xs text-outline underline-offset-4 hover:text-primary hover:underline"

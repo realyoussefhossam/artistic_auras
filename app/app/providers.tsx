@@ -6,6 +6,7 @@ import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
+import { sepolia } from "wagmi/chains";
 
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -42,6 +43,7 @@ export function Providers({ children }: Readonly<ProviderProps>) {
             accentColorForeground: "#ffffff",
             borderRadius: "medium",
           })}
+          initialChain={sepolia}
         >
           <TooltipProvider>
             {children}
