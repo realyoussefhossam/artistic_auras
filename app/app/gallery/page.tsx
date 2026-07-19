@@ -4,66 +4,54 @@ import { useState } from "react";
 import { Header } from "@/components/Header";
 import { NFTCard } from "@/components/NFTCard";
 import { NFTModal } from "@/components/NFTModal";
-import { resolveIpfsUri } from "@/lib/ipfs";
+import { AURA_NFTS, type AuraNFT } from "@/lib/nfts";
 
-interface GalleryNFT {
-  tokenId: number;
-  name: string;
-  imageUri: string;
-  rarity: "Common" | "Rare" | "Epic" | "Legendary";
-  description: string;
-  traits: { color?: string; energy?: string };
-  attributes: {
-    traitType: string;
-    value: string;
-    rarityPercent?: string;
-    colorKey?: "primary" | "secondary" | "tertiary" | "outline";
-  }[];
+type Rarity = "Common" | "Rare" | "Epic" | "Legendary";
+
+const RARITY_BY_TOKEN: Record<number, Rarity> = {
+  1: "Legendary",
+  2: "Rare",
+  3: "Epic",
+  4: "Common",
+  5: "Rare",
+  6: "Legendary",
+  7: "Epic",
+  8: "Common",
+  9: "Rare",
+  10: "Legendary",
+  11: "Epic",
+  12: "Common",
+  13: "Rare",
+  14: "Legendary",
+  15: "Epic",
+  16: "Common",
+  17: "Rare",
+  18: "Legendary",
+  19: "Epic",
+  20: "Common",
+  21: "Legendary",
+};
+
+const COLOR_KEYS: Array<"primary" | "secondary" | "tertiary" | "outline"> = [
+  "primary",
+  "tertiary",
+  "secondary",
+  "outline",
+];
+
+function getTraits(nft: AuraNFT) {
+  const colorAttr = nft.attributes.find((a) => a.traitType === "Color Scheme");
+  const energyAttr = nft.attributes.find((a) => a.traitType === "Energy Source");
+  return {
+    color: colorAttr?.value,
+    energy: energyAttr?.value,
+  };
 }
 
-// Placeholder data until on-chain reads are wired up
-const PLACEHOLDER_NFTS: GalleryNFT[] = Array.from({ length: 21 }, (_, i) => {
-  const rarities: GalleryNFT["rarity"][] = ["Common", "Rare", "Epic", "Legendary"];
-  const rarity = rarities[i % rarities.length];
-  return {
-    tokenId: i + 1,
-    name: `Aura #${String(i + 1).padStart(3, "0")}`,
-    imageUri: "",
-    rarity,
-    description:
-      "A unique manifestation of digital consciousness, captured in the Artistic Auras collection.",
-    traits: { color: `Variant ${i + 1}`, energy: `Level ${((i * 7) % 100) + 1}` },
-    attributes: [
-      {
-        traitType: "Color",
-        value: `Variant ${i + 1}`,
-        rarityPercent: "2%",
-        colorKey: "primary",
-      },
-      {
-        traitType: "Energy",
-        value: `Level ${((i * 7) % 100) + 1}`,
-        rarityPercent: "5%",
-        colorKey: "tertiary",
-      },
-      {
-        traitType: "Element",
-        value: "Void Plasma",
-        rarityPercent: "1%",
-        colorKey: "secondary",
-      },
-      {
-        traitType: "Mood",
-        value: "Ethereal",
-        rarityPercent: "12%",
-        colorKey: "outline",
-      },
-    ],
-  };
-});
-
 export default function GalleryPage() {
-  const [selectedNft, setSelectedNft] = useState<GalleryNFT | null>(null);
+  const [selectedTokenId, setSelectedTokenId] = useState<number | null>(null);
+
+  const selectedNft = selectedTokenId !== null ? AURA_NFTS[selectedTokenId] : null;
 
   return (
     <>
@@ -118,17 +106,21 @@ export default function GalleryPage() {
             The Gallery
           </h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {PLACEHOLDER_NFTS.map((nft) => (
-              <NFTCard
-                key={nft.tokenId}
-                tokenId={nft.tokenId}
-                name={nft.name}
-                imageUri={resolveIpfsUri(nft.imageUri)}
-                rarity={nft.rarity}
-                traits={nft.traits}
-                onClick={() => setSelectedNft(nft)}
-              />
-            ))}
+            {AURA_NFTS.map((nft) => {
+              const rarity = RARITY_BY_TOKEN[nft.tokenId] ?? "Common";
+              const traits = getTraits(nft);
+              return (
+                <NFTCard
+                  key={nft.tokenId}
+                  tokenId={nft.tokenId}
+                  name={nft.name}
+                  imageUri={nft.image}
+                  rarity={rarity}
+                  traits={traits}
+                  onClick={() => setSelectedTokenId(nft.tokenId - 1)}
+                />
+              );
+            })}
           </div>
         </section>
       </main>
@@ -136,7 +128,7 @@ export default function GalleryPage() {
       <NFTModal
         open={selectedNft !== null}
         onOpenChange={(open) => {
-          if (!open) setSelectedNft(null);
+          if (!open) setSelectedTokenId(null);
         }}
         nft={
           selectedNft
@@ -144,9 +136,13 @@ export default function GalleryPage() {
                 tokenId: selectedNft.tokenId,
                 name: selectedNft.name,
                 description: selectedNft.description,
-                imageUri: resolveIpfsUri(selectedNft.imageUri),
-                rarity: selectedNft.rarity,
-                attributes: selectedNft.attributes,
+                imageUri: selectedNft.image,
+                rarity: RARITY_BY_TOKEN[selectedNft.tokenId] ?? "Common",
+                attributes: selectedNft.attributes.map((a, i) => ({
+                  traitType: a.traitType,
+                  value: a.value,
+                  colorKey: COLOR_KEYS[i % COLOR_KEYS.length],
+                })),
               }
             : {
                 tokenId: 0,

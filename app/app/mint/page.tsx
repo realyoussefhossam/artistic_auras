@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Sparkles } from "lucide-react";
+import Image from "next/image";
 
 import { Header } from "@/components/Header";
 import { MintButton } from "@/components/MintButton";
@@ -21,10 +21,14 @@ export default function MintPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Preview */}
             <div className="relative w-full aspect-square md:aspect-[4/5] rounded-xl overflow-hidden glass-card-rounded group">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary-container/30 via-secondary-container/20 to-tertiary-container/10" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Sparkles className="size-24 text-primary/40" />
-              </div>
+              <Image
+                src="/art/1.png"
+                alt="Genesis Aura preview"
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                priority
+              />
               <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/80 pointer-events-none" />
               <div className="absolute bottom-0 left-0 w-full p-6 bg-surface/40 backdrop-blur-md border-t border-white/10">
                 <div className="flex justify-between items-end">
