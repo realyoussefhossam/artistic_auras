@@ -235,6 +235,40 @@ contract ArtisticAurasTest is Test {
         assertEq(royaltyAmount, 0.1 ether);
     }
 
+    function test_RoyaltyReceiverSyncsOnOwnershipTransfer() public {
+        // Before transfer: royalty receiver is the original owner
+        uint256 salePrice = 1 ether;
+        (address receiverBefore,) = artisticAuras.royaltyInfo(1, salePrice);
+        assertEq(receiverBefore, owner);
+
+        // Transfer ownership to user2
+        vm.prank(owner);
+        artisticAuras.transferOwnership(user2);
+
+        // After transfer: royalty receiver should be user2
+        (address receiverAfter, uint256 royaltyAmount) = artisticAuras.royaltyInfo(1, salePrice);
+        assertEq(receiverAfter, user2);
+        assertEq(royaltyAmount, salePrice * artisticAuras.ROYALTY_BASIS_POINTS() / 10_000);
+
+        // New owner is user2
+        assertEq(artisticAuras.owner(), user2);
+    }
+
+    function test_RoyaltySyncEmitsEventOnOwnershipTransfer() public {
+        vm.expectEmit(true, false, false, true);
+        emit DefaultRoyaltyUpdated(user2, artisticAuras.ROYALTY_BASIS_POINTS());
+
+        vm.prank(owner);
+        artisticAuras.transferOwnership(user2);
+    }
+
+    function test_RenounceOwnershipDoesNotRevert() public {
+        vm.prank(owner);
+        artisticAuras.renounceOwnership();
+
+        assertEq(artisticAuras.owner(), address(0));
+    }
+
     function test_SetDefaultRoyaltyRevertsForNonOwner() public {
         vm.startPrank(user1);
         vm.expectRevert();

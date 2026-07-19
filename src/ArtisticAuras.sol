@@ -97,6 +97,16 @@ contract ArtisticAuras is ERC721, ERC721Pausable, ERC2981, Ownable, ReentrancyGu
         emit DefaultRoyaltyUpdated(receiver, feeNumerator);
     }
 
+    /// @dev Hook called by OpenZeppelin's Ownable when ownership changes.
+    /// Automatically syncs the default royalty receiver to the new owner.
+    function _transferOwnership(address newOwner) internal override {
+        super._transferOwnership(newOwner);
+        if (newOwner != address(0)) {
+            _setDefaultRoyalty(newOwner, ROYALTY_BASIS_POINTS);
+            emit DefaultRoyaltyUpdated(newOwner, ROYALTY_BASIS_POINTS);
+        }
+    }
+
     /// @notice Sets a per-token royalty override.
     /// @param tokenId Token to override royalty for.
     /// @param receiver Address that receives royalty payments.
