@@ -20,7 +20,7 @@ type MintButtonProps = {
 export function MintButton({ onSuccess }: MintButtonProps) {
   const chainId = useChainId();
   const { isConnected } = useAccount();
-  const { mint, hash, isPending, isConfirming, isConfirmed, error } =
+  const { mint, hash, isPending, isConfirming, isConfirmed, error, mintedTokenId } =
     useMint(chainId);
   const { data: saleActive } = usePublicSaleActive(chainId);
   const { data: mintPrice } = useMintPrice(chainId);
@@ -45,12 +45,12 @@ export function MintButton({ onSuccess }: MintButtonProps) {
     if (isConfirmed && !confirmedRef.current) {
       confirmedRef.current = true;
       toast.success("Minted successfully!");
-      onSuccess?.(undefined, hash);
+      onSuccess?.(mintedTokenId, hash);
     }
     if (!isConfirmed) {
       confirmedRef.current = false;
     }
-  }, [isConfirmed, onSuccess, hash]);
+  }, [isConfirmed, onSuccess, hash, mintedTokenId]);
 
   useEffect(() => {
     if (error) {
