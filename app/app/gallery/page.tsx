@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useChainId } from "wagmi";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import { NFTCard } from "@/components/NFTCard";
 import { NFTModal } from "@/components/NFTModal";
 import { AURA_NFTS, type AuraNFT } from "@/lib/nfts";
@@ -233,6 +234,8 @@ export default function GalleryPage() {
               }
         }
       />
+
+      <Footer />
     </>
   );
 }

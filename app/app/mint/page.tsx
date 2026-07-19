@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useChainId } from "wagmi";
 
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import { MintButton } from "@/components/MintButton";
 import { MintSuccessModal } from "@/components/MintSuccessModal";
 import { NFTImage } from "@/components/NFTImage";
@@ -110,6 +111,8 @@ export default function MintPage() {
         tokenId={mintedTokenId}
         txHash={txHash}
       />
+
+      <Footer />
     </>
   );
 }

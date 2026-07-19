@@ -6,6 +6,7 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 import { AuroraBackground } from "@/components/AuroraBackground";
 import { StatsBar } from "@/components/StatsBar";
+import { Footer } from "@/components/Footer";
 
 export default function LandingPage() {
   return (
@@ -79,42 +80,7 @@ export default function LandingPage() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full py-12 bg-surface-container-lowest border-t border-outline-variant/30 relative z-10 mt-auto">
-        <div className="flex flex-col md:flex-row justify-between items-center px-5 md:px-16 gap-6 max-w-[1440px] mx-auto">
-          <div className="flex flex-col items-center md:items-start gap-2">
-            <div className="font-heading text-2xl font-bold text-on-surface flex items-center gap-2">
-              <Sparkles className="size-5 text-primary" />
-              Artistic Auras
-            </div>
-            <p className="font-mono text-xs text-secondary">
-              © 2024 Artistic Auras. All rights reserved.
-            </p>
-          </div>
-          <ul className="flex flex-wrap justify-center gap-6 font-mono text-xs text-on-surface-variant">
-            <li>
-              <a className="hover:text-primary transition-colors duration-200" href="#">
-                Discord
-              </a>
-            </li>
-            <li>
-              <a className="hover:text-primary transition-colors duration-200" href="#">
-                Twitter
-              </a>
-            </li>
-            <li>
-              <a className="hover:text-primary transition-colors duration-200" href="#">
-                Etherscan
-              </a>
-            </li>
-            <li>
-              <span className="text-outline-variant flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-blue-500" />
-                Built on Ethereum
-              </span>
-            </li>
-          </ul>
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 }
