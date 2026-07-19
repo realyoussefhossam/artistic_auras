@@ -1,15 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { useChainId } from "wagmi";
 
 import { Header } from "@/components/Header";
 import { MintButton } from "@/components/MintButton";
 import { MintSuccessModal } from "@/components/MintSuccessModal";
+import { NFTImage } from "@/components/NFTImage";
 import { useTotalSupply } from "@/hooks/read/useTotalSupply";
 import { useMintPrice } from "@/hooks/read/useMintPrice";
 import { formatEther } from "viem";
+import { AURA_NFTS } from "@/lib/nfts";
 
 export default function MintPage() {
   const chainId = useChainId();
@@ -30,6 +31,10 @@ export default function MintPage() {
       ? `${formatEther(mintPrice as bigint)} ETH`
       : "0.04 ETH";
 
+  const previewNft = nextTokenId !== null
+    ? AURA_NFTS.find((n) => n.tokenId === nextTokenId) ?? AURA_NFTS[0]
+    : AURA_NFTS[0];
+
   return (
     <>
       <Header />
@@ -39,8 +44,9 @@ export default function MintPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Preview */}
             <div className="relative w-full aspect-square md:aspect-[4/5] rounded-xl overflow-hidden glass-card-rounded group">
-              <Image
-                src="/art/1.png"
+              <NFTImage
+                ipfsUri={previewNft.image}
+                tokenId={previewNft.tokenId}
                 alt="Genesis Aura preview"
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"

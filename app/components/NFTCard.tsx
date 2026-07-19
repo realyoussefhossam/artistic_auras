@@ -1,7 +1,6 @@
 "use client";
 
-import Image from "next/image";
-import { resolveIpfsUri } from "@/lib/ipfs";
+import { NFTImage } from "@/components/NFTImage";
 import { cn } from "@/lib/utils";
 
 type Rarity = "Common" | "Rare" | "Epic" | "Legendary";
@@ -31,7 +30,6 @@ export function NFTCard({
   onClick,
 }: NFTCardProps) {
   const paddedId = tokenId.toString().padStart(3, "0");
-  const imageSrc = resolveIpfsUri(imageUri);
 
   return (
     <div
@@ -51,8 +49,9 @@ export function NFTCard({
       className="glass-panel aura-hover group flex h-[400px] cursor-pointer flex-col overflow-hidden rounded-xl transition-all duration-300"
     >
       <div className="relative h-3/4 overflow-hidden">
-        <Image
-          src={imageSrc}
+        <NFTImage
+          ipfsUri={imageUri}
+          tokenId={tokenId}
           alt={name}
           fill
           sizes="300px"

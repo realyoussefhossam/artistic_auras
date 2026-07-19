@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { X } from "lucide-react";
 import {
   Dialog,
@@ -9,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { resolveIpfsUri } from "@/lib/ipfs";
+import { NFTImage } from "@/components/NFTImage";
 import { cn } from "@/lib/utils";
 
 type Rarity = "Common" | "Rare" | "Epic" | "Legendary";
@@ -51,7 +50,6 @@ const colorKeyBorderClasses: Record<ColorKey, string> = {
 
 export function NFTModal({ open, onOpenChange, nft }: NFTModalProps) {
   const paddedId = nft.tokenId.toString().padStart(3, "0");
-  const imageSrc = resolveIpfsUri(nft.imageUri);
   const rarity = nft.rarity ?? "Common";
 
   return (
@@ -70,8 +68,9 @@ export function NFTModal({ open, onOpenChange, nft }: NFTModalProps) {
         </button>
         <div className="flex flex-col md:flex-row">
           <div className="relative h-72 w-full md:h-auto md:w-1/2">
-            <Image
-              src={imageSrc}
+            <NFTImage
+              ipfsUri={nft.imageUri}
+              tokenId={nft.tokenId}
               alt={nft.name}
               fill
               sizes="(max-width: 768px) 100vw, 50vw"

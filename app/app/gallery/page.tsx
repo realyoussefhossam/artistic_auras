@@ -171,12 +171,14 @@ export default function GalleryPage() {
               const name =
                 minted?.metadata?.name ?? nft.name;
 
+              const imageUri = minted?.metadata?.image ?? nft.image;
+
               return (
                 <div key={nft.tokenId} className="relative">
                   <NFTCard
                     tokenId={nft.tokenId}
                     name={name}
-                    imageUri={nft.image}
+                    imageUri={imageUri}
                     rarity={rarity}
                     traits={traits}
                     onClick={() => setSelectedTokenId(nft.tokenId - 1)}
@@ -207,7 +209,8 @@ export default function GalleryPage() {
                 description:
                   selectedMinted?.metadata?.description ??
                   selectedNft.description,
-                imageUri: selectedNft.image,
+                imageUri:
+                  selectedMinted?.metadata?.image ?? selectedNft.image,
                 rarity: RARITY_BY_TOKEN[selectedNft.tokenId] ?? "Common",
                 attributes: (selectedMinted?.metadata?.attributes ??
                   selectedNft.attributes.map((a) => ({
