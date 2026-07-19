@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useChainId } from "wagmi";
-import { ChevronDown, ChevronUp, X, Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { NFTCard } from "@/components/NFTCard";
@@ -37,13 +37,6 @@ const RARITY_BY_TOKEN: Record<number, Rarity> = {
   21: "Legendary",
 };
 
-const RARITY_ORDER: Record<Rarity, number> = {
-  Legendary: 0,
-  Epic: 1,
-  Rare: 2,
-  Common: 3,
-};
-
 const COLOR_KEYS: Array<"primary" | "secondary" | "tertiary" | "outline"> = [
   "primary",
   "tertiary",
@@ -51,17 +44,7 @@ const COLOR_KEYS: Array<"primary" | "secondary" | "tertiary" | "outline"> = [
   "outline",
 ];
 
-const TRAIT_TYPES = [
-  "Color Scheme",
-  "Energy Source",
-  "Element",
-  "Form",
-  "Mood",
-  "Theme",
-  "Movement",
-] as const;
-
-type SortOption = "recent" | "id-asc" | "id-desc" | "rarity-desc";
+type SortOption = "id-asc" | "id-desc" | "rarity-desc" | "recent";
 
 function getTraits(nft: AuraNFT) {
   const colorAttr = nft.attributes.find((a) => a.traitType === "Color Scheme");
@@ -86,38 +69,12 @@ function getOnChainTraits(nft: MintedNFT) {
   };
 }
 
-function getAttrValue(nft: AuraNFT, traitType: string): string | undefined {
-  return nft.attributes.find((a) => a.traitType === traitType)?.value;
-}
-
-function CollapsibleSection({
-  title,
-  children,
-  defaultOpen = false,
-}: {
-  title: string;
-  children: React.ReactNode;
-  defaultOpen?: boolean;
-}) {
-  const [open, setOpen] = useState(defaultOpen);
-  return (
-    <div>
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between cursor-pointer mb-2 text-on-surface hover:text-primary transition-colors"
-      >
-        <span>{title}</span>
-        {open ? (
-          <ChevronUp className="size-4 text-outline" />
-        ) : (
-          <ChevronDown className="size-4 text-outline" />
-        )}
-      </button>
-      {open && <div className="pl-2 space-y-2">{children}</div>}
-    </div>
-  );
-}
+const RARITY_ORDER: Record<Rarity, number> = {
+  Legendary: 0,
+  Epic: 1,
+  Rare: 2,
+  Common: 3,
+};
 
 export default function GalleryPage() {
   const chainId = useChainId();
@@ -129,62 +86,26 @@ export default function GalleryPage() {
   const [selectedTokenId, setSelectedTokenId] = useState<number | null>(null);
   const [sortBy, setSortBy] = useState<SortOption>("id-asc");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedRarities, setSelectedRarities] = useState<Set<Rarity>>(new Set());
-  const [selectedTraits, setSelectedTraits] = useState<
-    Record<string, Set<string>>
-  >({});
   const [showMintedOnly, setShowMintedOnly] = useState(false);
 
   const mintedCount =
     totalSupply !== undefined && totalSupply !== null ? Number(totalSupply) : 0;
 
-  // Build available trait values from all NFTs
-  const availableTraits = useMemo(() => {
-    const map: Record<string, string[]> = {};
-    for (const traitType of TRAIT_TYPES) {
-      const values = new Set<string>();
-      for (const nft of AURA_NFTS) {
-        const val = getAttrValue(nft, traitType);
-        if (val) values.add(val);
-      }
-      map[traitType] = Array.from(values).sort();
-    }
-    return map;
-  }, []);
-
-  // Filter and sort NFTs
   const filteredNfts = useMemo(() => {
     let result = AURA_NFTS.filter((nft) => {
-      const rarity = RARITY_BY_TOKEN[nft.tokenId] ?? "Common";
       const isMinted = nft.tokenId <= mintedCount;
 
-      // Search filter
       if (searchQuery.trim()) {
         const q = searchQuery.trim().toLowerCase();
-        const nameMatch = nft.name.toLowerCase().includes(q);
-        const idMatch = String(nft.tokenId).includes(q);
-        if (!nameMatch && !idMatch) return false;
+        if (!nft.name.toLowerCase().includes(q) && !String(nft.tokenId).includes(q))
+          return false;
       }
 
-      // Minted only filter
       if (showMintedOnly && !isMinted) return false;
-
-      // Rarity filter
-      if (selectedRarities.size > 0 && !selectedRarities.has(rarity)) {
-        return false;
-      }
-
-      // Trait filters
-      for (const [traitType, selectedValues] of Object.entries(selectedTraits)) {
-        if (selectedValues.size === 0) continue;
-        const nftValue = getAttrValue(nft, traitType);
-        if (!nftValue || !selectedValues.has(nftValue)) return false;
-      }
 
       return true;
     });
 
-    // Sort
     result = [...result].sort((a, b) => {
       switch (sortBy) {
         case "id-asc":
@@ -204,38 +125,13 @@ export default function GalleryPage() {
     });
 
     return result;
-  }, [searchQuery, showMintedOnly, selectedRarities, selectedTraits, sortBy, mintedCount]);
+  }, [searchQuery, showMintedOnly, sortBy, mintedCount]);
 
-  const activeFilterCount =
-    selectedRarities.size +
-    Object.values(selectedTraits).reduce((sum, s) => sum + s.size, 0) +
-    (showMintedOnly ? 1 : 0);
+  const hasFilters = searchQuery.trim() !== "" || showMintedOnly;
 
-  const clearAllFilters = () => {
-    setSelectedRarities(new Set());
-    setSelectedTraits({});
-    setShowMintedOnly(false);
+  const clearFilters = () => {
     setSearchQuery("");
-  };
-
-  const toggleRarity = (r: Rarity) => {
-    setSelectedRarities((prev) => {
-      const next = new Set(prev);
-      if (next.has(r)) next.delete(r);
-      else next.add(r);
-      return next;
-    });
-  };
-
-  const toggleTrait = (traitType: string, value: string) => {
-    setSelectedTraits((prev) => {
-      const next = { ...prev };
-      const current = new Set(next[traitType] ?? []);
-      if (current.has(value)) current.delete(value);
-      else current.add(value);
-      next[traitType] = current;
-      return next;
-    });
+    setShowMintedOnly(false);
   };
 
   const selectedNft = selectedTokenId !== null ? AURA_NFTS[selectedTokenId] : null;
@@ -248,18 +144,18 @@ export default function GalleryPage() {
       <Header />
 
       <main className="flex-grow flex flex-col md:flex-row max-w-[1440px] mx-auto w-full px-5 md:px-16 py-12 gap-6">
-        {/* Sidebar Filters */}
-        <aside className="w-full md:w-64 flex-shrink-0 flex flex-col gap-8">
+        {/* Sidebar */}
+        <aside className="w-full md:w-64 flex-shrink-0">
           <div className="glass-panel rounded-xl p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="font-heading text-2xl text-on-surface">Filters</h2>
-              {activeFilterCount > 0 && (
+              {hasFilters && (
                 <button
-                  onClick={clearAllFilters}
+                  onClick={clearFilters}
                   className="font-mono text-xs text-primary hover:text-secondary transition-colors flex items-center gap-1"
                 >
                   <X className="size-3" />
-                  Clear ({activeFilterCount})
+                  Clear
                 </button>
               )}
             </div>
@@ -327,70 +223,15 @@ export default function GalleryPage() {
               </div>
 
               {/* Minted Only */}
-              <div>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={showMintedOnly}
-                    onChange={(e) => setShowMintedOnly(e.target.checked)}
-                    className="rounded border-outline-variant/30 bg-black/30 text-primary focus:ring-primary"
-                  />
-                  <span className="text-sm text-on-surface">Minted only</span>
-                </label>
-              </div>
-
-              {/* Rarity */}
-              <div>
-                <h3 className="font-mono text-xs text-outline mb-3 uppercase">
-                  Rarity
-                </h3>
-                <div className="space-y-2">
-                  {(["Legendary", "Epic", "Rare", "Common"] as Rarity[]).map((r) => (
-                    <label key={r} className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={selectedRarities.has(r)}
-                        onChange={() => toggleRarity(r)}
-                        className="rounded border-outline-variant/30 bg-black/30 text-primary focus:ring-primary"
-                      />
-                      <span className="text-sm text-on-surface">{r}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Trait Filters */}
-              <div>
-                <h3 className="font-mono text-xs text-outline mb-3 uppercase">
-                  Traits
-                </h3>
-                <div className="space-y-4">
-                  {TRAIT_TYPES.map((traitType) => (
-                    <CollapsibleSection key={traitType} title={traitType}>
-                      {availableTraits[traitType]?.map((value) => {
-                        const checked =
-                          selectedTraits[traitType]?.has(value) ?? false;
-                        return (
-                          <label
-                            key={value}
-                            className="flex items-start gap-2 cursor-pointer"
-                          >
-                            <input
-                              type="checkbox"
-                              checked={checked}
-                              onChange={() => toggleTrait(traitType, value)}
-                              className="rounded border-outline-variant/30 bg-black/30 text-primary focus:ring-primary mt-0.5"
-                            />
-                            <span className="text-xs text-on-surface-variant leading-relaxed">
-                              {value}
-                            </span>
-                          </label>
-                        );
-                      })}
-                    </CollapsibleSection>
-                  ))}
-                </div>
-              </div>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={showMintedOnly}
+                  onChange={(e) => setShowMintedOnly(e.target.checked)}
+                  className="rounded border-outline-variant/30 bg-black/30 text-primary focus:ring-primary"
+                />
+                <span className="text-sm text-on-surface">Minted only</span>
+              </label>
             </div>
           </div>
         </aside>
@@ -407,12 +248,14 @@ export default function GalleryPage() {
           )}
           {filteredNfts.length === 0 ? (
             <div className="glass-panel rounded-xl p-12 text-center">
-              <p className="text-on-surface-variant mb-2">No Auras match your filters.</p>
+              <p className="text-on-surface-variant mb-2">
+                No Auras match your filters.
+              </p>
               <button
-                onClick={clearAllFilters}
+                onClick={clearFilters}
                 className="text-primary hover:text-secondary transition-colors font-mono text-sm"
               >
-                Clear all filters
+                Clear filters
               </button>
             </div>
           ) : (
@@ -465,8 +308,7 @@ export default function GalleryPage() {
                 description:
                   selectedMinted?.metadata?.description ??
                   selectedNft.description,
-                imageUri:
-                  selectedMinted?.metadata?.image ?? selectedNft.image,
+                imageUri: selectedMinted?.metadata?.image ?? selectedNft.image,
                 rarity: RARITY_BY_TOKEN[selectedNft.tokenId] ?? "Common",
                 attributes: (selectedMinted?.metadata?.attributes ??
                   selectedNft.attributes.map((a) => ({
