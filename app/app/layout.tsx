@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, Inter } from "next/font/google";
+import { Space_Grotesk, Inter, Geist } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -27,7 +30,8 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${spaceGrotesk.variable} ${inter.variable}`}
+      suppressHydrationWarning
+      className={cn(spaceGrotesk.variable, inter.variable, "font-sans", geist.variable)}
     >
       <body>
         <Providers>{children}</Providers>

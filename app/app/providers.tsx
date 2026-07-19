@@ -2,7 +2,8 @@
 
 import { type ReactNode, useState, useSyncExternalStore } from "react";
 
-import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
+import "@rainbow-me/rainbowkit/styles.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 import { WagmiProvider } from "wagmi";
@@ -36,7 +37,14 @@ export function Providers({ children }: Readonly<ProviderProps>) {
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
       <WagmiProvider config={wagmiConfig}>
         <QueryClientProvider client={queryClient}>
-          <RainbowKitProvider appInfo={appInfo}>
+          <RainbowKitProvider
+            appInfo={appInfo}
+            theme={darkTheme({
+              accentColor: "#7c3aed",
+              accentColorForeground: "#ffffff",
+              borderRadius: "medium",
+            })}
+          >
             <TooltipProvider>
               {children}
               <Toaster />
