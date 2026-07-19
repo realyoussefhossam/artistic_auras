@@ -1,33 +1,37 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Space_Grotesk, Inter } from "next/font/google";
 import "./globals.css";
+import { Providers } from "./providers";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
+  variable: "--font-space-grotesk",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const inter = Inter({
   subsets: ["latin"],
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
   title: "Artistic Auras",
-  description: "A 21-piece abstract NFT collection on Ethereum",
+  description:
+    "A 21-piece abstract NFT collection capturing cosmic energy and vibrant expressionism on Ethereum.",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${spaceGrotesk.variable} ${inter.variable}`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
