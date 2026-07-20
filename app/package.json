@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "node -e \"const fs=require('fs'); const d=JSON.parse(fs.readFileSync('../out/ArtisticAuras.sol/ArtisticAuras.json')); fs.writeFileSync('lib/abi.json', JSON.stringify(d.abi, null, 2));\""
+    "postinstall": "node -e \"const fs=require('fs'); const p='../out/ArtisticAuras.sol/ArtisticAuras.json'; if(fs.existsSync(p)){const d=JSON.parse(fs.readFileSync(p)); fs.writeFileSync('lib/abi.json', JSON.stringify(d.abi, null, 2));}\""
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",

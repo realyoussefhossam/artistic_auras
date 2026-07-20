@@ -19,3 +19,8 @@ __MACOSX/
 .env
 .env.*
 !.env.example
+.vercel
+
+# Coverage
+lcov.info
+*.info

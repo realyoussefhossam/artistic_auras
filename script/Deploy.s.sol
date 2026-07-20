@@ -7,10 +7,15 @@ import {ArtisticAuras} from "../src/ArtisticAuras.sol";
 contract DeployArtisticAuras is Script {
     function run() external {
         string memory baseURI = vm.envString("METADATA_BASE_URI");
+        bool openSaleImmediately = vm.envOr("OPEN_SALE_ON_DEPLOY", false);
 
         vm.startBroadcast();
         ArtisticAuras artisticAuras = new ArtisticAuras(baseURI);
         address deployer = artisticAuras.owner();
+
+        if (openSaleImmediately) {
+            artisticAuras.setPublicSaleActive(true);
+        }
         vm.stopBroadcast();
 
         console.log("ArtisticAuras deployed at:", address(artisticAuras));
