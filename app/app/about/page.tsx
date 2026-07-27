@@ -2,6 +2,7 @@
 
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { ClientLogo, CLIENTS_WITH_LOGO } from "@/components/ClientLogo";
 import { ABOUT_COPY, ABOUT_CLIENTS } from "@/lib/about-copy";
 
 export default function AboutPage() {
@@ -61,9 +62,13 @@ export default function AboutPage() {
                 key={client}
                 className="card flex items-center justify-center rounded-lg px-4 py-6 text-center"
               >
-                <span className="font-heading text-sm font-bold text-secondary">
-                  {client}
-                </span>
+                {CLIENTS_WITH_LOGO.has(client) ? (
+                  <ClientLogo name={client} className="h-8 w-auto text-secondary" />
+                ) : (
+                  <span className="font-heading text-sm font-bold text-secondary">
+                    {client}
+                  </span>
+                )}
               </div>
             ))}
           </div>
