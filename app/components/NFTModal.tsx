@@ -48,12 +48,12 @@ export function NFTModal({ open, onOpenChange, nft }: NFTModalProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         showCloseButton={false}
-        className="glass-panel custom-scrollbar max-h-[90vh] w-full max-w-4xl gap-0 overflow-y-auto rounded-xl p-0 sm:max-w-4xl"
+        className="custom-scrollbar card max-h-[90vh] w-full max-w-4xl gap-0 overflow-y-auto rounded-lg p-0 sm:max-w-4xl"
       >
         <button
           type="button"
           onClick={() => onOpenChange(false)}
-          className="absolute right-3 top-3 z-10 rounded-md p-1.5 text-on-surface-variant transition-colors hover:bg-surface-variant/40 hover:text-on-surface"
+          className="absolute right-3 top-3 z-10 rounded-md p-1.5 text-secondary transition-colors hover:bg-surface hover:text-primary"
           aria-label="Close"
         >
           <X className="size-5" />
@@ -71,21 +71,21 @@ export function NFTModal({ open, onOpenChange, nft }: NFTModalProps) {
           </div>
           <div className="custom-scrollbar flex max-h-[90vh] w-full flex-col gap-4 overflow-y-auto p-6 md:w-1/2">
             <DialogHeader className="gap-2">
-              <span className="font-mono text-xs uppercase tracking-widest text-on-surface-variant">
+              <span className="text-xs uppercase tracking-widest text-muted">
                 Aura #{paddedId}
               </span>
-              <DialogTitle className="font-heading text-2xl text-on-surface">
+              <DialogTitle className="font-heading text-2xl font-bold text-primary">
                 {nft.name}
               </DialogTitle>
             </DialogHeader>
             {nft.description ? (
-              <p className="text-sm leading-relaxed text-on-surface-variant">
+              <p className="text-sm leading-relaxed text-secondary">
                 {nft.description}
               </p>
             ) : null}
             {nft.attributes && nft.attributes.length > 0 ? (
               <div className="flex flex-col gap-3">
-                <div className="font-mono text-xs uppercase tracking-widest text-primary">
+                <div className="text-xs uppercase tracking-widest text-accent">
                   Attributes
                 </div>
                 <div className="grid grid-cols-2 gap-3">
@@ -95,14 +95,14 @@ export function NFTModal({ open, onOpenChange, nft }: NFTModalProps) {
                       <div
                         key={attr.traitType}
                         className={cn(
-                          "glass-panel rounded-lg border-l-2 p-3",
+                          "card rounded-lg border-l-2 p-3",
                           colorKeyBorderClasses[colorKey],
                         )}
                       >
-                        <div className="font-mono text-xs uppercase tracking-wider text-on-surface-variant">
+                        <div className="text-xs uppercase tracking-wider text-muted">
                           {attr.traitType}
                         </div>
-                        <div className="mt-1 text-sm text-on-surface">
+                        <div className="mt-1 text-sm text-primary">
                           {attr.value}
                         </div>
                       </div>

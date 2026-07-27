@@ -1,8 +1,13 @@
 "use client";
 
 import { type ReactNode, useState, useSyncExternalStore } from "react";
+import { useTheme } from "next-themes";
 
-import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
+import {
+  RainbowKitProvider,
+  lightTheme,
+  darkTheme,
+} from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
@@ -18,8 +23,11 @@ export interface ProviderProps {
 
 const emptySubscribe = () => () => {};
 
+const RAINBOW_ACCENT = "#6366f1";
+
 export function Providers({ children }: Readonly<ProviderProps>) {
   const [queryClient] = useState(() => new QueryClient());
+  const { resolvedTheme } = useTheme();
   const mounted = useSyncExternalStore(
     emptySubscribe,
     () => true,
@@ -28,23 +36,19 @@ export function Providers({ children }: Readonly<ProviderProps>) {
 
   const appInfo = { appName: "Artistic Auras" };
 
-  // Prevent hydration issues by only rendering once mounted
   if (!mounted) {
     return null;
   }
 
+  const rainbowTheme =
+    resolvedTheme === "dark"
+      ? darkTheme({ accentColor: RAINBOW_ACCENT, accentColorForeground: "#ffffff", borderRadius: "medium" })
+      : lightTheme({ accentColor: RAINBOW_ACCENT, accentColorForeground: "#ffffff", borderRadius: "medium" });
+
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider
-          appInfo={appInfo}
-          theme={darkTheme({
-            accentColor: "#7c3aed",
-            accentColorForeground: "#ffffff",
-            borderRadius: "medium",
-          })}
-          initialChain={sepolia}
-        >
+        <RainbowKitProvider appInfo={appInfo} theme={rainbowTheme} initialChain={sepolia}>
           <TooltipProvider>
             {children}
             <Toaster />

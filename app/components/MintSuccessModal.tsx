@@ -26,25 +26,25 @@ export function MintSuccessModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="glass-panel w-full max-w-sm rounded-xl border-white/10 p-6">
+      <DialogContent className="card w-full max-w-sm rounded-lg p-6">
         <DialogHeader className="items-center text-center">
-          <div className="mb-2 flex size-14 items-center justify-center rounded-full bg-primary-container/20">
-            <CheckCircle2 className="size-8 text-primary" />
+          <div className="mb-2 flex size-14 items-center justify-center rounded-full bg-accent/10">
+            <CheckCircle2 className="size-8 text-accent" />
           </div>
-          <DialogTitle className="font-heading text-2xl font-bold text-on-surface">
+          <DialogTitle className="font-heading text-2xl font-bold text-primary">
             Aura Minted!
           </DialogTitle>
-          <DialogDescription className="text-on-surface-variant">
+          <DialogDescription className="text-secondary">
             Your NFT has been successfully minted to your wallet.
           </DialogDescription>
         </DialogHeader>
 
         {tokenId !== undefined && (
-          <div className="flex items-center justify-between rounded-lg bg-surface-container-high/60 px-4 py-3">
-            <span className="font-mono text-xs uppercase tracking-widest text-outline">
+          <div className="flex items-center justify-between rounded-lg border border-border-default bg-surface px-4 py-3">
+            <span className="text-xs uppercase tracking-widest text-muted">
               Token ID
             </span>
-            <span className="font-heading text-lg text-on-surface">
+            <span className="font-heading text-lg font-bold text-primary">
               #{tokenId.toString()}
             </span>
           </div>

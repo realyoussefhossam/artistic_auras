@@ -2,20 +2,20 @@ import Image from "next/image";
 
 export function Footer() {
   return (
-    <footer className="w-full py-12 bg-surface-container-lowest border-t border-outline-variant/30 relative z-10 mt-auto">
-      <div className="flex flex-col md:flex-row justify-between items-center px-5 md:px-16 gap-6 max-w-[1440px] mx-auto">
-        <div className="flex flex-col items-center md:items-start gap-2">
-          <div className="font-heading text-2xl font-bold text-on-surface">
+    <footer className="mt-auto w-full border-t border-border-default bg-surface py-12">
+      <div className="mx-auto flex max-w-[1440px] flex-col items-center justify-between gap-6 px-5 md:flex-row md:px-16">
+        <div className="flex flex-col items-center gap-2 md:items-start">
+          <div className="font-heading text-2xl font-bold text-primary">
             Artistic Auras
           </div>
-          <p className="font-mono text-xs text-secondary">
+          <p className="text-xs text-muted">
             © 2026 Artistic Auras. All rights reserved.
           </p>
         </div>
-        <ul className="flex flex-wrap justify-center gap-6 font-mono text-xs text-on-surface-variant items-center">
+        <ul className="flex flex-wrap items-center justify-center gap-6 text-xs text-secondary">
           <li>
             <a
-              className="hover:text-primary transition-colors duration-200 flex items-center gap-1.5"
+              className="flex items-center gap-1.5 transition-colors hover:text-accent"
               href="https://x.com"
               target="_blank"
               rel="noopener noreferrer"
@@ -26,7 +26,7 @@ export function Footer() {
           </li>
           <li>
             <a
-              className="hover:text-primary transition-colors duration-200 flex items-center gap-1.5"
+              className="flex items-center gap-1.5 transition-colors hover:text-accent"
               href="https://telegram.org"
               target="_blank"
               rel="noopener noreferrer"
@@ -36,12 +36,12 @@ export function Footer() {
             </a>
           </li>
           <li>
-            <a className="hover:text-primary transition-colors duration-200" href="#">
+            <a className="transition-colors hover:text-accent" href="#">
               Etherscan
             </a>
           </li>
           <li>
-            <span className="text-outline-variant flex items-center gap-1.5">
+            <span className="flex items-center gap-1.5 text-muted">
               <Image src="/icons/ethereum.svg" alt="Ethereum" width={16} height={16} />
               Built on Ethereum
             </span>

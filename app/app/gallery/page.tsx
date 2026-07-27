@@ -105,16 +105,16 @@ export default function GalleryPage() {
     <>
       <Header />
 
-      <main className="flex-grow flex flex-col md:flex-row max-w-[1440px] mx-auto w-full px-5 md:px-16 py-12 gap-6">
+      <main className="flex-grow flex flex-col md:flex-row max-w-[1440px] mx-auto w-full px-5 md:px-16 py-12 gap-6 pt-32">
         {/* Sidebar */}
         <aside className="w-full md:w-64 flex-shrink-0">
-          <div className="glass-panel rounded-xl p-6">
+          <div className="card rounded-lg p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="font-heading text-2xl text-on-surface">Filters</h2>
+              <h2 className="font-heading text-2xl font-bold text-primary">Filters</h2>
               {hasFilters && (
                 <button
                   onClick={clearFilters}
-                  className="font-mono text-xs text-primary hover:text-secondary transition-colors flex items-center gap-1"
+                  className="text-xs text-accent hover:opacity-80 transition-opacity flex items-center gap-1"
                 >
                   <X className="size-3" />
                   Clear
@@ -125,25 +125,25 @@ export default function GalleryPage() {
             <div className="flex flex-col gap-6">
               {/* Stats */}
               <div>
-                <h3 className="font-mono text-xs text-outline mb-3 uppercase">
+                <h3 className="mb-3 text-xs uppercase tracking-widest text-muted">
                   Collection Stats
                 </h3>
                 <div className="flex flex-col gap-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-on-surface-variant">Minted</span>
-                    <span className="font-mono text-on-surface">
+                    <span className="text-secondary">Minted</span>
+                    <span className="text-primary">
                       {mintedCount} / 21
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-on-surface-variant">Remaining</span>
-                    <span className="font-mono text-primary">
+                    <span className="text-secondary">Remaining</span>
+                    <span className="text-accent">
                       {21 - mintedCount}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-on-surface-variant">Showing</span>
-                    <span className="font-mono text-on-surface">
+                    <span className="text-secondary">Showing</span>
+                    <span className="text-primary">
                       {filteredNfts.length}
                     </span>
                   </div>
@@ -152,30 +152,30 @@ export default function GalleryPage() {
 
               {/* Search */}
               <div>
-                <h3 className="font-mono text-xs text-outline mb-3 uppercase">
+                <h3 className="mb-3 text-xs uppercase tracking-widest text-muted">
                   Search
                 </h3>
                 <div className="relative">
-                  <Search className="absolute left-2 top-1/2 -translate-y-1/2 size-4 text-outline" />
+                  <Search className="absolute left-2 top-1/2 -translate-y-1/2 size-4 text-muted" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="ID or name..."
-                    className="input-recessed w-full rounded-lg pl-8 pr-2 py-2 text-sm text-on-surface placeholder:text-outline"
+                    className="input-flat w-full pl-8 pr-2 py-2 text-sm text-primary placeholder:text-muted"
                   />
                 </div>
               </div>
 
               {/* Sort */}
               <div>
-                <h3 className="font-mono text-xs text-outline mb-3 uppercase">
+                <h3 className="mb-3 text-xs uppercase tracking-widest text-muted">
                   Sort By
                 </h3>
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as SortOption)}
-                  className="w-full bg-black/30 border border-outline-variant/30 rounded-lg p-2 text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                  className="input-flat w-full p-2 text-primary focus:border-accent focus:ring-1 focus:ring-accent outline-none"
                 >
                   <option value="id-asc">ID: Low to High</option>
                   <option value="id-desc">ID: High to Low</option>
@@ -189,9 +189,9 @@ export default function GalleryPage() {
                   type="checkbox"
                   checked={showMintedOnly}
                   onChange={(e) => setShowMintedOnly(e.target.checked)}
-                  className="rounded border-outline-variant/30 bg-black/30 text-primary focus:ring-primary"
+                  className="rounded border-border-default text-accent focus:ring-accent"
                 />
-                <span className="text-sm text-on-surface">Minted only</span>
+                <span className="text-sm text-primary">Minted only</span>
               </label>
             </div>
           </div>
@@ -199,22 +199,22 @@ export default function GalleryPage() {
 
         {/* Gallery Grid */}
         <section className="flex-grow">
-          <h1 className="font-heading text-5xl md:text-7xl mb-8 text-on-surface">
+          <h1 className="mb-8 font-heading text-4xl font-extrabold text-primary md:text-6xl">
             The Gallery
           </h1>
           {isLoading && mintedCount > 0 && (
-            <p className="text-on-surface-variant mb-6 font-mono text-sm">
+            <p className="mb-6 text-sm text-secondary">
               Loading on-chain data...
             </p>
           )}
           {filteredNfts.length === 0 ? (
-            <div className="glass-panel rounded-xl p-12 text-center">
-              <p className="text-on-surface-variant mb-2">
+            <div className="card rounded-lg p-12 text-center">
+              <p className="mb-2 text-secondary">
                 No Auras match your filters.
               </p>
               <button
                 onClick={clearFilters}
-                className="text-primary hover:text-secondary transition-colors font-mono text-sm"
+                className="text-accent hover:opacity-80 transition-opacity text-sm"
               >
                 Clear filters
               </button>
@@ -242,7 +242,7 @@ export default function GalleryPage() {
                       onClick={() => setSelectedTokenId(nft.tokenId - 1)}
                     />
                     {!isMinted && (
-                      <div className="absolute top-2 right-2 z-10 rounded-md bg-black/70 px-2 py-1 font-mono text-xs text-outline backdrop-blur-sm">
+                      <div className="absolute top-2 right-2 z-10 rounded-md bg-black/70 px-2 py-1 text-xs text-white">
                         Not Minted
                       </div>
                     )}

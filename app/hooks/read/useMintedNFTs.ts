@@ -47,43 +47,53 @@ export function useMintedNFTs(totalSupply: bigint | undefined) {
   });
 
   useEffect(() => {
-    if (!data || data.length === 0) {
-      setNfts([]);
-      return;
-    }
+    let cancelled = false;
 
-    setIsLoading(true);
-    const newNfts: MintedNFT[] = [];
-
-    for (let i = 0; i < count; i++) {
-      const uriResult = data[i * 2];
-      const ownerResult = data[i * 2 + 1];
-      if (uriResult?.result && ownerResult?.result) {
-        const tokenURI = uriResult.result as string;
-        const owner = ownerResult.result as string;
-        newNfts.push({
-          tokenId: i + 1,
-          tokenURI,
-          owner,
-        });
+    (async () => {
+      if (!data || data.length === 0) {
+        if (!cancelled) setNfts([]);
+        return;
       }
-    }
 
-    // Fetch metadata for each token URI
-    Promise.all(
-      newNfts.map(async (nft) => {
-        try {
-          const res = await fetch(resolveIpfsUri(nft.tokenURI));
-          const json = await res.json();
-          return { ...nft, metadata: json };
-        } catch {
-          return nft;
+      if (!cancelled) setIsLoading(true);
+      const newNfts: MintedNFT[] = [];
+
+      for (let i = 0; i < count; i++) {
+        const uriResult = data[i * 2];
+        const ownerResult = data[i * 2 + 1];
+        if (uriResult?.result && ownerResult?.result) {
+          const tokenURI = uriResult.result as string;
+          const owner = ownerResult.result as string;
+          newNfts.push({
+            tokenId: i + 1,
+            tokenURI,
+            owner,
+          });
         }
-      }),
-    ).then((withMetadata) => {
-      setNfts(withMetadata);
-      setIsLoading(false);
-    });
+      }
+
+      // Fetch metadata for each token URI
+      const withMetadata = await Promise.all(
+        newNfts.map(async (nft) => {
+          try {
+            const res = await fetch(resolveIpfsUri(nft.tokenURI));
+            const json = await res.json();
+            return { ...nft, metadata: json };
+          } catch {
+            return nft;
+          }
+        }),
+      );
+
+      if (!cancelled) {
+        setNfts(withMetadata);
+        setIsLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, [data, count]);
 
   return { nfts, isLoading: isContractsLoading || isLoading };

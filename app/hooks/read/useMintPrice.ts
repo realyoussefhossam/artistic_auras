@@ -5,6 +5,6 @@ export function useMintPrice(chainId: number) {
   return useReadContract({
     abi: contractABI,
     address: getContractAddress(chainId),
-    functionName: "MINT_PRICE",
+    functionName: "mintPrice",
   });
 }

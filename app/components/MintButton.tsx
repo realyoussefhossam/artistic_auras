@@ -32,7 +32,7 @@ export function MintButton({ onSuccess }: MintButtonProps) {
   const [quantity, setQuantity] = useState<number>(MIN_QUANTITY);
   const confirmedRef = useRef(false);
 
-  const price = (mintPrice as bigint) ?? parseEther("0.04");
+  const price = (mintPrice as bigint | undefined) ?? parseEther("0.04");
   const totalCost = price * BigInt(quantity);
   const totalCostDisplay = Number(formatEther(totalCost)).toFixed(4);
 
@@ -45,8 +45,7 @@ export function MintButton({ onSuccess }: MintButtonProps) {
     BigInt(totalSupply as bigint) >= BigInt(maxSupply as bigint);
 
   const isBusy = isPending || isConfirming;
-  const isDisabled =
-    !isConnected || saleNotActive || soldOut || isBusy;
+  const isDisabled = !isConnected || saleNotActive || soldOut || isBusy;
 
   useEffect(() => {
     if (isConfirmed && !confirmedRef.current) {
@@ -80,7 +79,7 @@ export function MintButton({ onSuccess }: MintButtonProps) {
       return;
     }
     try {
-      await mint(BigInt(quantity));
+      await mint(BigInt(quantity), price);
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Mint failed";
@@ -99,9 +98,9 @@ export function MintButton({ onSuccess }: MintButtonProps) {
   };
 
   return (
-    <div className="glass-panel flex w-full max-w-md flex-col gap-6 rounded-xl p-6">
+    <div className="card flex w-full max-w-md flex-col gap-6 rounded-lg p-6">
       <div className="flex flex-col gap-2">
-        <span className="font-mono text-xs uppercase tracking-widest text-outline">
+        <span className="text-xs uppercase tracking-widest text-muted">
           Quantity
         </span>
         <div className="flex items-center gap-3">
@@ -110,7 +109,7 @@ export function MintButton({ onSuccess }: MintButtonProps) {
             onClick={decrement}
             disabled={quantity <= MIN_QUANTITY || isBusy}
             aria-label="Decrease quantity"
-            className="input-recessed flex size-10 items-center justify-center rounded-lg text-on-surface transition-colors hover:border-primary disabled:cursor-not-allowed disabled:opacity-40"
+            className="input-flat flex size-10 items-center justify-center text-primary transition-colors disabled:cursor-not-allowed disabled:opacity-40"
           >
             <Minus className="size-4" />
           </button>
@@ -119,25 +118,25 @@ export function MintButton({ onSuccess }: MintButtonProps) {
             readOnly
             value={quantity}
             aria-label="Mint quantity"
-            className="input-recessed h-10 w-16 rounded-lg text-center font-mono text-lg text-on-surface"
+            className="input-flat h-10 w-16 text-center text-lg text-primary"
           />
           <button
             type="button"
             onClick={increment}
             disabled={quantity >= MAX_QUANTITY || isBusy}
             aria-label="Increase quantity"
-            className="input-recessed flex size-10 items-center justify-center rounded-lg text-on-surface transition-colors hover:border-primary disabled:cursor-not-allowed disabled:opacity-40"
+            className="input-flat flex size-10 items-center justify-center text-primary transition-colors disabled:cursor-not-allowed disabled:opacity-40"
           >
             <Plus className="size-4" />
           </button>
         </div>
       </div>
 
-      <div className="flex items-center justify-between border-t border-outline-variant/40 pt-4">
-        <span className="font-mono text-xs uppercase tracking-widest text-outline">
+      <div className="flex items-center justify-between border-t border-border-default pt-4">
+        <span className="text-xs uppercase tracking-widest text-muted">
           Total Cost
         </span>
-        <span className="font-heading text-xl text-primary">
+        <span className="font-heading text-xl font-bold text-accent">
           {totalCostDisplay} ETH
         </span>
       </div>
@@ -146,7 +145,7 @@ export function MintButton({ onSuccess }: MintButtonProps) {
         type="button"
         onClick={handleMint}
         disabled={isDisabled}
-        className="btn-primary flex h-12 w-full items-center justify-center gap-2 rounded-lg font-heading text-base font-semibold disabled:cursor-not-allowed disabled:opacity-50"
+        className="btn-accent flex h-12 w-full items-center justify-center gap-2 rounded-lg font-heading text-base font-semibold"
       >
         {isBusy && <Loader2 className="size-5 animate-spin" />}
         <span>{renderButtonText()}</span>
@@ -160,7 +159,7 @@ export function MintButton({ onSuccess }: MintButtonProps) {
           href={`${getEtherscanUrl(chainId)}/tx/${hash}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-center font-mono text-xs text-outline underline-offset-4 hover:text-primary hover:underline"
+          className="text-center text-xs text-muted underline-offset-4 hover:text-accent hover:underline"
         >
           View transaction on Etherscan
         </a>
