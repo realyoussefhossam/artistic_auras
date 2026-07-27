@@ -44,6 +44,7 @@ contract ArtisticAurasTest is Test {
     event DefaultRoyaltyUpdated(address indexed receiver, uint96 feeNumerator);
     event TokenRoyaltyUpdated(uint256 indexed tokenId, address indexed receiver, uint96 feeNumerator);
     event Withdrawal(address indexed to, uint256 amount);
+    event MintPriceUpdated(uint256 oldPrice, uint256 newPrice);
 
     function setUp() public {
         owner = makeAddr("owner");
@@ -448,5 +449,64 @@ contract ArtisticAurasTest is Test {
     function test_ContractURIReturnsMetadataURI() public view {
         string memory expected = string(abi.encodePacked(BASE_URI, "contract_metadata.json"));
         assertEq(artisticAuras.contractURI(), expected);
+    }
+
+    function test_MintPriceInitializedToConstant() public view {
+        assertEq(artisticAuras.mintPrice(), artisticAuras.MINT_PRICE());
+        assertEq(artisticAuras.mintPrice(), MINT_PRICE);
+    }
+
+    function test_SetMintPrice() public {
+        uint256 newPrice = 0.08 ether;
+        vm.prank(owner);
+        artisticAuras.setMintPrice(newPrice);
+
+        assertEq(artisticAuras.mintPrice(), newPrice);
+    }
+
+    function test_SetMintPriceEmitsEvent() public {
+        uint256 oldPrice = artisticAuras.mintPrice();
+        uint256 newPrice = 0.07 ether;
+
+        vm.expectEmit(false, false, false, true);
+        emit MintPriceUpdated(oldPrice, newPrice);
+
+        vm.prank(owner);
+        artisticAuras.setMintPrice(newPrice);
+    }
+
+    function test_SetMintPriceRevertsForNonOwner() public {
+        vm.startPrank(user1);
+        vm.expectRevert();
+        artisticAuras.setMintPrice(0.05 ether);
+        vm.stopPrank();
+    }
+
+    function test_SetMintPriceRevertsOnZero() public {
+        vm.prank(owner);
+        vm.expectRevert("Mint price must be greater than zero");
+        artisticAuras.setMintPrice(0);
+    }
+
+    function test_MintUsesUpdatedPrice() public {
+        _enableSale();
+
+        uint256 newPrice = 0.1 ether;
+        vm.prank(owner);
+        artisticAuras.setMintPrice(newPrice);
+
+        vm.deal(user1, newPrice);
+
+        // Old price (0.04 ether) is now rejected
+        vm.startPrank(user1);
+        vm.expectRevert("Incorrect payment amount");
+        artisticAuras.mint{value: MINT_PRICE}(1);
+
+        // New price (0.1 ether) is accepted
+        artisticAuras.mint{value: newPrice}(1);
+        vm.stopPrank();
+
+        assertEq(artisticAuras.ownerOf(1), user1);
+        assertEq(artisticAuras.getTotalSupply(), 1);
     }
 }

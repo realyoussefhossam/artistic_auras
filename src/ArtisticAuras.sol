@@ -21,6 +21,8 @@ contract ArtisticAuras is ERC721, ERC721Pausable, ERC2981, Ownable, ReentrancyGu
     uint256 public constant MINT_PRICE = 0.04 ether;
     uint96 public constant ROYALTY_BASIS_POINTS = 500; // 5%
 
+    uint256 public mintPrice;
+
     bool public publicSaleActive;
 
     string private _baseTokenURI;
@@ -32,11 +34,13 @@ contract ArtisticAuras is ERC721, ERC721Pausable, ERC2981, Ownable, ReentrancyGu
     event DefaultRoyaltyUpdated(address indexed receiver, uint96 feeNumerator);
     event TokenRoyaltyUpdated(uint256 indexed tokenId, address indexed receiver, uint96 feeNumerator);
     event Withdrawal(address indexed to, uint256 amount);
+    event MintPriceUpdated(uint256 oldPrice, uint256 newPrice);
 
     /// @param baseURI The IPFS folder URI ending with `/` that contains `1.json`..`21.json`.
     constructor(string memory baseURI) ERC721("Artistic Auras", "AURA") Ownable(msg.sender) {
         _baseTokenURI = baseURI;
         _contractURI = string(abi.encodePacked(baseURI, "contract_metadata.json"));
+        mintPrice = MINT_PRICE;
         _setDefaultRoyalty(owner(), ROYALTY_BASIS_POINTS);
     }
 
@@ -51,7 +55,7 @@ contract ArtisticAuras is ERC721, ERC721Pausable, ERC2981, Ownable, ReentrancyGu
     /// @param quantity The number of tokens to mint.
     function mint(uint256 quantity) external payable whenNotPaused whenPublicSaleActive nonReentrant {
         require(quantity > 0, "Quantity must be greater than zero");
-        require(msg.value == MINT_PRICE * quantity, "Incorrect payment amount");
+        require(msg.value == mintPrice * quantity, "Incorrect payment amount");
         require(_tokenIds + quantity <= MAX_SUPPLY, "Max supply reached");
 
         for (uint256 i = 0; i < quantity; i++) {
@@ -87,6 +91,16 @@ contract ArtisticAuras is ERC721, ERC721Pausable, ERC2981, Ownable, ReentrancyGu
     function setPublicSaleActive(bool active) external onlyOwner {
         publicSaleActive = active;
         emit PublicSaleToggled(active);
+    }
+
+    /// @notice Updates the public mint price used by `mint`.
+    /// @dev `MINT_PRICE` remains the immutable default; this mutates the live `mintPrice`.
+    /// @param newMintPrice The new per-token mint price in wei (must be greater than zero).
+    function setMintPrice(uint256 newMintPrice) external onlyOwner {
+        require(newMintPrice > 0, "Mint price must be greater than zero");
+        uint256 oldPrice = mintPrice;
+        mintPrice = newMintPrice;
+        emit MintPriceUpdated(oldPrice, newMintPrice);
     }
 
     /// @notice Sets the default royalty receiver and fee for all tokens.

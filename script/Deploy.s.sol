@@ -23,7 +23,8 @@ contract DeployArtisticAuras is Script {
         console.log("Token name:", artisticAuras.name());
         console.log("Token symbol:", artisticAuras.symbol());
         console.log("Max supply:", artisticAuras.MAX_SUPPLY());
-        console.log("Mint price:", artisticAuras.MINT_PRICE());
+        console.log("Mint price (constant default):", artisticAuras.MINT_PRICE());
+        console.log("Mint price (live):", artisticAuras.mintPrice());
         console.log("Public sale active:", artisticAuras.publicSaleActive());
         console.log("Paused:", artisticAuras.paused());
         console.log("Royalty basis points:", artisticAuras.ROYALTY_BASIS_POINTS());
