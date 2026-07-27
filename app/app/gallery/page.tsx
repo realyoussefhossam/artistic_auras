@@ -101,13 +101,35 @@ export default function GalleryPage() {
     (n) => n.tokenId === (selectedTokenId !== null ? selectedTokenId + 1 : -1),
   );
 
+  const selectedIndexInFiltered = selectedTokenId !== null
+    ? filteredNfts.findIndex((n) => n.tokenId === selectedTokenId + 1)
+    : -1;
+
+  const goToPrev = () => {
+    if (selectedIndexInFiltered > 0) {
+      setSelectedTokenId(filteredNfts[selectedIndexInFiltered - 1].tokenId - 1);
+    }
+  };
+  const goToNext = () => {
+    if (selectedIndexInFiltered >= 0 && selectedIndexInFiltered < filteredNfts.length - 1) {
+      setSelectedTokenId(filteredNfts[selectedIndexInFiltered + 1].tokenId - 1);
+    }
+  };
+
+  const prevNft = selectedIndexInFiltered > 0
+    ? { tokenId: filteredNfts[selectedIndexInFiltered - 1].tokenId, imageUri: filteredNfts[selectedIndexInFiltered - 1].image, name: filteredNfts[selectedIndexInFiltered - 1].name }
+    : null;
+  const nextNft = (selectedIndexInFiltered >= 0 && selectedIndexInFiltered < filteredNfts.length - 1)
+    ? { tokenId: filteredNfts[selectedIndexInFiltered + 1].tokenId, imageUri: filteredNfts[selectedIndexInFiltered + 1].image, name: filteredNfts[selectedIndexInFiltered + 1].name }
+    : null;
+
   return (
     <>
       <Header />
 
-      <main className="flex-grow flex flex-col md:flex-row max-w-[1440px] mx-auto w-full px-5 md:px-16 py-12 gap-6 pt-32">
+      <main className="flex-grow flex flex-col md:flex-row max-w-[1440px] mx-auto w-full px-5 md:px-16 py-12 gap-6 pt-32 pb-16">
         {/* Sidebar */}
-        <aside className="w-full md:w-64 flex-shrink-0">
+        <aside className="w-full md:w-64 flex-shrink-0 md:sticky md:top-32 md:self-start">
           <div className="card rounded-lg p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="font-heading text-2xl font-bold text-primary">Filters</h2>
@@ -259,6 +281,12 @@ export default function GalleryPage() {
         onOpenChange={(open) => {
           if (!open) setSelectedTokenId(null);
         }}
+        onPrev={goToPrev}
+        onNext={goToNext}
+        hasPrev={selectedIndexInFiltered > 0}
+        hasNext={selectedIndexInFiltered >= 0 && selectedIndexInFiltered < filteredNfts.length - 1}
+        prevNft={prevNft}
+        nextNft={nextNft}
         nft={
           selectedNft
             ? {

@@ -11,7 +11,7 @@ import {
 } from "@rainbow-me/rainbowkit/wallets";
 import type { Transport } from "viem";
 import { createConfig, http } from "wagmi";
-import { mainnet, sepolia } from "wagmi/chains";
+import { mainnet } from "wagmi/chains";
 
 const walletConnectProjectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
 
@@ -42,11 +42,10 @@ const connectors = connectorsForWallets(
 
 const transports: Record<number, Transport> = {
   [mainnet.id]: http(),
-  [sepolia.id]: http(),
 };
 
 export const wagmiConfig = createConfig({
-  chains: [mainnet, sepolia],
+  chains: [mainnet],
   connectors,
   transports,
   ssr: true,

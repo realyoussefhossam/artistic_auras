@@ -1,18 +1,15 @@
-const PINATA_GATEWAY = "https://gateway.pinata.cloud/ipfs/";
-const IPFS_IO_GATEWAY = "https://ipfs.io/ipfs/";
+const PRIMARY_GATEWAY = "https://cloudflare-ipfs.com/ipfs/";
+const FALLBACK_GATEWAY = "https://gateway.pinata.cloud/ipfs/";
 
 export function resolveIpfsUri(uri: string): string {
   if (!uri) return "";
-  // Already an HTTP URL
   if (uri.startsWith("http")) return uri;
-  // ipfs://<cid>/<path>
   if (uri.startsWith("ipfs://")) {
     const path = uri.slice(7);
-    return `${PINATA_GATEWAY}${path}`;
+    return `${PRIMARY_GATEWAY}${path}`;
   }
-  // Bare CID
   if (uri.startsWith("Qm") || uri.startsWith("baf")) {
-    return `${PINATA_GATEWAY}${uri}`;
+    return `${PRIMARY_GATEWAY}${uri}`;
   }
   return uri;
 }
@@ -22,10 +19,10 @@ export function resolveIpfsUriFallback(uri: string): string {
   if (uri.startsWith("http")) return uri;
   if (uri.startsWith("ipfs://")) {
     const path = uri.slice(7);
-    return `${IPFS_IO_GATEWAY}${path}`;
+    return `${FALLBACK_GATEWAY}${path}`;
   }
   if (uri.startsWith("Qm") || uri.startsWith("baf")) {
-    return `${IPFS_IO_GATEWAY}${uri}`;
+    return `${FALLBACK_GATEWAY}${uri}`;
   }
   return uri;
 }

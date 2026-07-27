@@ -167,6 +167,15 @@
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: var(--text-muted);
   }
+
+  /* Hide scrollbar (carousel) */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
 
 @keyframes fadeInUp {
