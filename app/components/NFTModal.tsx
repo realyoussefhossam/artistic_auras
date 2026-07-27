@@ -78,6 +78,7 @@ export function NFTModal({
           {/* Image area — 3/5 width, with prev/next peek thumbnails */}
           <div className="relative h-72 w-full flex-shrink-0 md:h-auto md:w-3/5">
             <NFTImage
+              key={`main-${nft.tokenId}`}
               ipfsUri={nft.imageUri}
               tokenId={nft.tokenId}
               alt={nft.name}
@@ -96,6 +97,7 @@ export function NFTModal({
               >
                 <div className="relative h-16 w-16 overflow-hidden rounded-md border border-white/30 shadow-lg transition-transform group-hover/peek:scale-110 md:h-20 md:w-20">
                   <NFTImage
+                    key={`prev-${prevNft.tokenId}`}
                     ipfsUri={prevNft.imageUri}
                     tokenId={prevNft.tokenId}
                     alt={prevNft.name}
@@ -118,6 +120,7 @@ export function NFTModal({
               >
                 <div className="relative h-16 w-16 overflow-hidden rounded-md border border-white/30 shadow-lg transition-transform group-hover/peek:scale-110 md:h-20 md:w-20">
                   <NFTImage
+                    key={`next-${nextNft.tokenId}`}
                     ipfsUri={nextNft.imageUri}
                     tokenId={nextNft.tokenId}
                     alt={nextNft.name}

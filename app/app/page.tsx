@@ -9,7 +9,6 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Header } from "@/components/Header";
 import { StatsBar } from "@/components/StatsBar";
 import { Footer } from "@/components/Footer";
-import { ArtworkCarousel } from "@/components/ArtworkCarousel";
 import { useMintPrice } from "@/hooks/read/useMintPrice";
 import { useTotalSupply } from "@/hooks/read/useTotalSupply";
 import { LANDING_COPY } from "@/lib/landing-copy";
@@ -68,11 +67,6 @@ export default function LandingPage() {
         </div>
 
         <StatsBar className="mt-16 md:mt-24" totalSupply={minted} mintPrice={priceDisplay} />
-
-        {/* Artwork carousel */}
-        <section className="mt-16 w-full max-w-[1440px] md:mt-24">
-          <ArtworkCarousel />
-        </section>
 
         {/* Overview */}
         <section className="mx-auto mt-24 max-w-3xl md:mt-32">
