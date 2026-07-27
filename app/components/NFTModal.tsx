@@ -1,6 +1,7 @@
 "use client";
 
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect, useRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -64,6 +65,20 @@ export function NFTModal({
 }: NFTModalProps) {
   const chainId = useChainId();
   const paddedId = nft.tokenId.toString().padStart(3, "0");
+  const thumbStripRef = useRef<HTMLDivElement>(null);
+  const activeThumbRef = useRef<HTMLButtonElement>(null);
+
+  // Auto-scroll the thumbnail strip so the active thumbnail stays visible.
+  useEffect(() => {
+    const strip = thumbStripRef.current;
+    const active = activeThumbRef.current;
+    if (!strip || !active) return;
+    const stripRect = strip.getBoundingClientRect();
+    const activeRect = active.getBoundingClientRect();
+    if (activeRect.left < stripRect.left || activeRect.right > stripRect.right) {
+      active.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    }
+  }, [nft.tokenId]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -95,10 +110,14 @@ export function NFTModal({
                 >
                   <ChevronLeft className="size-4" />
                 </button>
-                <div className="no-scrollbar flex flex-1 gap-2 overflow-x-auto scroll-smooth">
+                <div
+                  ref={thumbStripRef}
+                  className="no-scrollbar flex flex-1 gap-2 overflow-x-auto scroll-smooth"
+                >
                   {allNfts.map((t) => (
                     <button
                       key={t.tokenId}
+                      ref={t.tokenId === nft.tokenId ? activeThumbRef : undefined}
                       type="button"
                       onClick={() => onSelect?.(t.tokenId)}
                       className={cn(
