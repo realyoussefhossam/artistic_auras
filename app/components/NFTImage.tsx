@@ -10,12 +10,16 @@ interface NFTImageProps extends Omit<ImageProps, "src" | "onError"> {
 }
 
 export function NFTImage({ ipfsUri, tokenId, alt, ...props }: NFTImageProps) {
-  const primary = resolveIpfsUri(ipfsUri);
-  const gatewayFallback = resolveIpfsUriFallback(ipfsUri);
-  const localFallback = tokenId ? `/art/${tokenId}.png` : null;
+  // Prefer the local copy in /public/art/<tokenId>.png (instant, no gateway).
+  const local = tokenId ? `/art/${tokenId}.png` : null;
+  const primary = local ?? resolveIpfsUri(ipfsUri);
+  const ipfsPrimary = resolveIpfsUri(ipfsUri);
+  const ipfsFallback = resolveIpfsUriFallback(ipfsUri);
+
   const [src, setSrc] = useState(primary);
-  const [triedGatewayFallback, setTriedGatewayFallback] = useState(false);
-  const [triedLocalFallback, setTriedLocalFallback] = useState(false);
+  const [stage, setStage] = useState<"local" | "ipfs" | "fallback">(
+    local ? "local" : "ipfs",
+  );
 
   return (
     <Image
@@ -23,12 +27,12 @@ export function NFTImage({ ipfsUri, tokenId, alt, ...props }: NFTImageProps) {
       src={src}
       alt={alt}
       onError={() => {
-        if (!triedGatewayFallback) {
-          setSrc(gatewayFallback);
-          setTriedGatewayFallback(true);
-        } else if (!triedLocalFallback && localFallback) {
-          setSrc(localFallback);
-          setTriedLocalFallback(true);
+        if (stage === "local") {
+          setSrc(ipfsPrimary);
+          setStage("ipfs");
+        } else if (stage === "ipfs") {
+          setSrc(ipfsFallback);
+          setStage("fallback");
         }
       }}
     />

@@ -20,6 +20,12 @@ interface NFTAttribute {
   colorKey?: ColorKey;
 }
 
+interface ThumbNft {
+  tokenId: number;
+  imageUri: string;
+  name: string;
+}
+
 interface NFTModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -34,8 +40,8 @@ interface NFTModalProps {
   onNext?: () => void;
   hasPrev?: boolean;
   hasNext?: boolean;
-  prevNft?: { tokenId: number; imageUri: string; name: string } | null;
-  nextNft?: { tokenId: number; imageUri: string; name: string } | null;
+  allNfts?: ThumbNft[];
+  onSelect?: (tokenId: number) => void;
 }
 
 const colorKeyBorderClasses: Record<ColorKey, string> = {
@@ -53,8 +59,8 @@ export function NFTModal({
   onNext,
   hasPrev,
   hasNext,
-  prevNft,
-  nextNft,
+  allNfts,
+  onSelect,
 }: NFTModalProps) {
   const chainId = useChainId();
   const paddedId = nft.tokenId.toString().padStart(3, "0");
@@ -75,63 +81,70 @@ export function NFTModal({
         </button>
 
         <div className="flex flex-col md:flex-row md:flex-1 md:overflow-hidden">
-          {/* Image area — 3/5 width, with prev/next peek thumbnails */}
-          <div className="relative h-72 w-full flex-shrink-0 md:h-auto md:w-3/5">
-            <NFTImage
-              key={`main-${nft.tokenId}`}
-              ipfsUri={nft.imageUri}
-              tokenId={nft.tokenId}
-              alt={nft.name}
-              fill
-              sizes="(max-width: 768px) 100vw, 60vw"
-              className="object-cover"
-            />
-
-            {/* Prev peek thumbnail */}
-            {onPrev && hasPrev && prevNft && (
-              <button
-                type="button"
-                onClick={onPrev}
-                aria-label="Previous NFT"
-                className="group/peek absolute left-0 top-0 z-20 flex h-full w-20 flex-col items-center justify-center gap-2 bg-gradient-to-r from-black/70 to-transparent transition-all hover:w-28 md:w-24"
-              >
-                <div className="relative h-16 w-16 overflow-hidden rounded-md border border-white/30 shadow-lg transition-transform group-hover/peek:scale-110 md:h-20 md:w-20">
-                  <NFTImage
-                    key={`prev-${prevNft.tokenId}`}
-                    ipfsUri={prevNft.imageUri}
-                    tokenId={prevNft.tokenId}
-                    alt={prevNft.name}
-                    fill
-                    sizes="80px"
-                    className="object-cover"
-                  />
+          {/* Image column — thumbnail strip on top + main image */}
+          <div className="flex w-full flex-col md:w-3/5">
+            {/* Thumbnail strip with arrows */}
+            {allNfts && allNfts.length > 1 && (
+              <div className="relative flex items-center gap-1 border-b border-border-default bg-surface px-2 py-2">
+                <button
+                  type="button"
+                  onClick={onPrev}
+                  disabled={!hasPrev}
+                  aria-label="Previous NFT"
+                  className="flex size-7 flex-shrink-0 items-center justify-center rounded text-primary transition-colors hover:bg-canvas disabled:cursor-not-allowed disabled:opacity-30"
+                >
+                  <ChevronLeft className="size-4" />
+                </button>
+                <div className="no-scrollbar flex flex-1 gap-2 overflow-x-auto scroll-smooth">
+                  {allNfts.map((t) => (
+                    <button
+                      key={t.tokenId}
+                      type="button"
+                      onClick={() => onSelect?.(t.tokenId)}
+                      className={cn(
+                        "relative size-14 flex-shrink-0 overflow-hidden rounded-md border-2 transition-all",
+                        t.tokenId === nft.tokenId
+                          ? "border-accent ring-2 ring-accent/40"
+                          : "border-transparent opacity-60 hover:opacity-100",
+                      )}
+                      aria-label={t.name}
+                    >
+                      <NFTImage
+                        key={`thumb-${t.tokenId}`}
+                        ipfsUri={t.imageUri}
+                        tokenId={t.tokenId}
+                        alt={t.name}
+                        fill
+                        sizes="56px"
+                        className="object-cover"
+                      />
+                    </button>
+                  ))}
                 </div>
-                <ChevronLeft className="size-6 text-white drop-shadow" />
-              </button>
+                <button
+                  type="button"
+                  onClick={onNext}
+                  disabled={!hasNext}
+                  aria-label="Next NFT"
+                  className="flex size-7 flex-shrink-0 items-center justify-center rounded text-primary transition-colors hover:bg-canvas disabled:cursor-not-allowed disabled:opacity-30"
+                >
+                  <ChevronRight className="size-4" />
+                </button>
+              </div>
             )}
 
-            {/* Next peek thumbnail */}
-            {onNext && hasNext && nextNft && (
-              <button
-                type="button"
-                onClick={onNext}
-                aria-label="Next NFT"
-                className="group/peek absolute right-0 top-0 z-20 flex h-full w-20 flex-col items-center justify-center gap-2 bg-gradient-to-l from-black/70 to-transparent transition-all hover:w-28 md:w-24"
-              >
-                <div className="relative h-16 w-16 overflow-hidden rounded-md border border-white/30 shadow-lg transition-transform group-hover/peek:scale-110 md:h-20 md:w-20">
-                  <NFTImage
-                    key={`next-${nextNft.tokenId}`}
-                    ipfsUri={nextNft.imageUri}
-                    tokenId={nextNft.tokenId}
-                    alt={nextNft.name}
-                    fill
-                    sizes="80px"
-                    className="object-cover"
-                  />
-                </div>
-                <ChevronRight className="size-6 text-white drop-shadow" />
-              </button>
-            )}
+            {/* Main image */}
+            <div className="relative flex-grow bg-canvas">
+              <NFTImage
+                key={`main-${nft.tokenId}`}
+                ipfsUri={nft.imageUri}
+                tokenId={nft.tokenId}
+                alt={nft.name}
+                fill
+                sizes="(max-width: 768px) 100vw, 60vw"
+                className="object-contain"
+              />
+            </div>
           </div>
 
           {/* Content — 2/5 width, scrolls independently */}

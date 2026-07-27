@@ -105,6 +105,12 @@ export default function GalleryPage() {
     ? filteredNfts.findIndex((n) => n.tokenId === selectedTokenId + 1)
     : -1;
 
+  const allThumbs = filteredNfts.map((n) => ({
+    tokenId: n.tokenId,
+    imageUri: n.image,
+    name: n.name,
+  }));
+
   const goToPrev = () => {
     if (selectedIndexInFiltered > 0) {
       setSelectedTokenId(filteredNfts[selectedIndexInFiltered - 1].tokenId - 1);
@@ -115,13 +121,6 @@ export default function GalleryPage() {
       setSelectedTokenId(filteredNfts[selectedIndexInFiltered + 1].tokenId - 1);
     }
   };
-
-  const prevNft = selectedIndexInFiltered > 0
-    ? { tokenId: filteredNfts[selectedIndexInFiltered - 1].tokenId, imageUri: filteredNfts[selectedIndexInFiltered - 1].image, name: filteredNfts[selectedIndexInFiltered - 1].name }
-    : null;
-  const nextNft = (selectedIndexInFiltered >= 0 && selectedIndexInFiltered < filteredNfts.length - 1)
-    ? { tokenId: filteredNfts[selectedIndexInFiltered + 1].tokenId, imageUri: filteredNfts[selectedIndexInFiltered + 1].image, name: filteredNfts[selectedIndexInFiltered + 1].name }
-    : null;
 
   return (
     <>
@@ -285,8 +284,8 @@ export default function GalleryPage() {
         onNext={goToNext}
         hasPrev={selectedIndexInFiltered > 0}
         hasNext={selectedIndexInFiltered >= 0 && selectedIndexInFiltered < filteredNfts.length - 1}
-        prevNft={prevNft}
-        nextNft={nextNft}
+        allNfts={allThumbs}
+        onSelect={(tokenId) => setSelectedTokenId(tokenId - 1)}
         nft={
           selectedNft
             ? {
