@@ -11,7 +11,7 @@ import {
 import "@rainbow-me/rainbowkit/styles.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
-import { sepolia } from "wagmi/chains";
+import { mainnet } from "wagmi/chains";
 
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -48,7 +48,7 @@ export function Providers({ children }: Readonly<ProviderProps>) {
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider appInfo={appInfo} theme={rainbowTheme} initialChain={sepolia}>
+        <RainbowKitProvider appInfo={appInfo} theme={rainbowTheme} initialChain={mainnet}>
           <TooltipProvider>
             {children}
             <Toaster />

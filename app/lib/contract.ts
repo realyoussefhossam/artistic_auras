@@ -3,11 +3,11 @@ import { sepolia, mainnet } from "wagmi/chains";
 
 export const contractABI = abi;
 
-export const SEPOLIA_CONTRACT = "0xC800B15856b3711f433F51aaE8BEe6AA9c090Ad5";
-const MAINNET_CONTRACT = "0x0000000000000000000000000000000000000000"; // TBD
+const SEPOLIA_CONTRACT = "0xC800B15856b3711f433F51aaE8BEe6AA9c090Ad5"; // stale (old ABI)
+export const MAINNET_CONTRACT = "0x2A313cB8281205F748DE4E144Ad23C89878497c1";
 
 /** Chain IDs where the contract is deployed. */
-export const SUPPORTED_CHAIN_IDS = [sepolia.id] as const;
+export const SUPPORTED_CHAIN_IDS = [mainnet.id] as const;
 
 export function isSupportedChain(chainId: number | undefined): boolean {
   if (chainId === undefined) return false;
@@ -15,9 +15,9 @@ export function isSupportedChain(chainId: number | undefined): boolean {
 }
 
 export function getContractAddress(chainId: number): `0x${string}` {
-  if (chainId === sepolia.id) return SEPOLIA_CONTRACT as `0x${string}`;
   if (chainId === mainnet.id) return MAINNET_CONTRACT as `0x${string}`;
-  return SEPOLIA_CONTRACT as `0x${string}`;
+  if (chainId === sepolia.id) return SEPOLIA_CONTRACT as `0x${string}`;
+  return MAINNET_CONTRACT as `0x${string}`;
 }
 
 /** Returns the Etherscan base URL for a given chain ID. */
