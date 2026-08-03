@@ -3,6 +3,7 @@
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ClientLogo, CLIENTS_WITH_LOGO } from "@/components/ClientLogo";
+import { Mail } from "lucide-react";
 import { ABOUT_COPY, ABOUT_CLIENTS } from "@/lib/about-copy";
 
 export default function AboutPage() {
@@ -72,6 +73,23 @@ export default function AboutPage() {
               </div>
             ))}
           </div>
+        </section>
+        {/* Inquiries */}
+        <section className="mx-auto mt-20 max-w-3xl text-center">
+          <h2 className="font-heading text-3xl font-black text-primary md:text-4xl">
+            Inquiries
+          </h2>
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-secondary">
+            For commissions, collaborations, and collection inquiries, reach
+            out directly.
+          </p>
+          <a
+            href="mailto:valerio@artisticauras.com"
+            className="btn-accent mt-8 inline-flex items-center gap-2 rounded-lg px-8 py-3 font-heading text-lg font-medium"
+          >
+            <Mail className="size-5" />
+            valerio@artisticauras.com
+          </a>
         </section>
       </main>
 
