@@ -3,7 +3,6 @@ import localFont from "next/font/local";
 import { Sono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
-import { ThemeProvider } from "@/components/theme-provider";
 
 const nhg = localFont({
   src: [
@@ -46,9 +45,7 @@ export default function RootLayout({
       className={`${nhg.variable} ${sono.variable}`}
     >
       <body className="min-h-screen flex flex-col antialiased">
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
-          <Providers>{children}</Providers>
-        </ThemeProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

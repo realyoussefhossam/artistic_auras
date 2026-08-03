@@ -4,7 +4,6 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Sparkles } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ThemeToggle } from "@/components/theme-toggle";
 
 const navLinks = [
   { label: "Landing", href: "/" },
@@ -48,7 +47,6 @@ export function Header() {
         </ul>
 
         <div className="flex items-center gap-3">
-          <ThemeToggle />
           <ConnectButton />
         </div>
       </div>

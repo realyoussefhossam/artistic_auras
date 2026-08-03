@@ -3,7 +3,7 @@
 Source: Stitch project `15862468903779873735`, screens fetched 2026-07-19.
 Originals in `stitch/{mint,landing,gallery,shader}/`.
 
-## Color System (Material Design 3, dark theme)
+## Color System (light theme only — dark mode removed)
 
 ### Floor & Surfaces
 | Token | Value | Usage |
