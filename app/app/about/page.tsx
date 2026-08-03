@@ -13,7 +13,7 @@ export default function AboutPage() {
       <main className="flex-grow relative z-10 flex flex-col items-center px-5 md:px-16 pt-32 pb-16">
         {/* Hero */}
         <section className="mx-auto max-w-3xl text-center">
-          <h1 className="font-heading text-5xl font-extrabold tracking-tight text-primary animate-fade-in-up md:text-6xl">
+          <h1 className="font-heading text-5xl font-black tracking-tight text-primary animate-fade-in-up md:text-6xl">
             {ABOUT_COPY.hero.name}
           </h1>
           <p className="mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-secondary animate-fade-in-up delay-100">
@@ -23,7 +23,7 @@ export default function AboutPage() {
 
         {/* Journey */}
         <section className="mx-auto mt-24 max-w-3xl md:mt-32">
-          <h2 className="mb-6 font-heading text-3xl font-extrabold text-primary md:text-4xl">
+          <h2 className="mb-6 font-heading text-3xl font-black text-primary md:text-4xl">
             {ABOUT_COPY.journey.title}
           </h2>
           <p className="text-lg leading-relaxed text-secondary">
@@ -33,7 +33,7 @@ export default function AboutPage() {
 
         {/* Visionary */}
         <section className="mx-auto mt-20 max-w-3xl">
-          <h2 className="mb-6 font-heading text-3xl font-extrabold text-primary md:text-4xl">
+          <h2 className="mb-6 font-heading text-3xl font-black text-primary md:text-4xl">
             {ABOUT_COPY.visionary.title}
           </h2>
           <p className="text-lg leading-relaxed text-secondary">
@@ -43,7 +43,7 @@ export default function AboutPage() {
 
         {/* Mission */}
         <section className="mx-auto mt-20 max-w-3xl">
-          <h2 className="mb-6 font-heading text-3xl font-extrabold text-primary md:text-4xl">
+          <h2 className="mb-6 font-heading text-3xl font-black text-primary md:text-4xl">
             {ABOUT_COPY.mission.title}
           </h2>
           <p className="text-lg leading-relaxed text-secondary">
@@ -53,7 +53,7 @@ export default function AboutPage() {
 
         {/* Notable Clients and Collaborations */}
         <section className="mx-auto mt-20 max-w-4xl">
-          <h2 className="mb-10 text-center font-heading text-3xl font-extrabold text-primary md:text-4xl">
+          <h2 className="mb-10 text-center font-heading text-3xl font-black text-primary md:text-4xl">
             {ABOUT_COPY.clients.title}
           </h2>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
@@ -65,7 +65,7 @@ export default function AboutPage() {
                 {CLIENTS_WITH_LOGO.has(client) ? (
                   <ClientLogo name={client} className="h-8 w-auto text-secondary" />
                 ) : (
-                  <span className="font-heading text-sm font-bold text-secondary">
+                  <span className="font-heading text-sm font-medium text-secondary">
                     {client}
                   </span>
                 )}

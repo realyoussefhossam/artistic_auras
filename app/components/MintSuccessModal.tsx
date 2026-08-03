@@ -31,7 +31,7 @@ export function MintSuccessModal({
           <div className="mb-2 flex size-14 items-center justify-center rounded-full bg-accent/10">
             <CheckCircle2 className="size-8 text-accent" />
           </div>
-          <DialogTitle className="font-heading text-2xl font-bold text-primary">
+          <DialogTitle className="font-heading text-2xl font-black text-primary">
             Aura Minted!
           </DialogTitle>
           <DialogDescription className="text-secondary">
@@ -44,7 +44,7 @@ export function MintSuccessModal({
             <span className="text-xs uppercase tracking-widest text-muted">
               Token ID
             </span>
-            <span className="font-heading text-lg font-bold text-primary">
+            <span className="font-heading text-lg font-black text-primary">
               #{tokenId.toString()}
             </span>
           </div>

@@ -136,7 +136,7 @@ export function MintButton({ onSuccess }: MintButtonProps) {
         <span className="text-xs uppercase tracking-widest text-muted">
           Total Cost
         </span>
-        <span className="font-heading text-xl font-bold text-accent">
+        <span className="font-heading text-xl font-black text-accent">
           {totalCostDisplay} ETH
         </span>
       </div>
@@ -145,7 +145,7 @@ export function MintButton({ onSuccess }: MintButtonProps) {
         type="button"
         onClick={handleMint}
         disabled={isDisabled}
-        className="btn-accent flex h-12 w-full items-center justify-center gap-2 rounded-lg font-heading text-base font-semibold"
+        className="btn-accent flex h-12 w-full items-center justify-center gap-2 rounded-lg font-heading text-base font-medium"
       >
         {isBusy && <Loader2 className="size-5 animate-spin" />}
         <span>{renderButtonText()}</span>

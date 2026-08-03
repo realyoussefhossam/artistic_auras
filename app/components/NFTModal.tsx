@@ -172,7 +172,7 @@ export function NFTModal({
               <span className="text-xs uppercase tracking-widest text-muted">
                 Aura #{paddedId}
               </span>
-              <DialogTitle className="font-heading text-2xl font-bold text-primary">
+              <DialogTitle className="font-heading text-2xl font-black text-primary">
                 {nft.name}
               </DialogTitle>
             </DialogHeader>
@@ -216,7 +216,7 @@ export function NFTModal({
               href={getOpenSeaAssetUrl(chainId, getContractAddress(chainId), nft.tokenId)}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-accent mt-2 flex h-12 w-full items-center justify-center gap-2 rounded-lg font-heading text-base font-bold"
+              className="btn-accent mt-2 flex h-12 w-full items-center justify-center gap-2 rounded-lg font-heading text-base font-medium"
             >
               View on OpenSea
             </a>

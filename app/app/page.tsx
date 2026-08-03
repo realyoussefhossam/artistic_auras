@@ -35,7 +35,7 @@ export default function LandingPage() {
             <span className="text-sm text-secondary">{LANDING_COPY.badge}</span>
           </div>
 
-          <h1 className="font-heading text-5xl font-extrabold tracking-tight text-primary animate-fade-in-up md:text-7xl">
+          <h1 className="font-heading text-5xl font-black tracking-tight text-primary animate-fade-in-up md:text-7xl">
             Artistic Auras
           </h1>
 
@@ -46,7 +46,7 @@ export default function LandingPage() {
           <div className="animate-fade-in-up delay-200 mt-4 flex items-center gap-2">
             <Link
               href="/mint"
-              className="btn-accent inline-flex items-center gap-2 rounded-lg px-8 py-3 font-heading text-lg font-bold"
+              className="btn-accent inline-flex items-center gap-2 rounded-lg px-8 py-3 font-heading text-lg font-medium"
             >
               <span className="flex items-center gap-2">
                 Mint Now
@@ -70,7 +70,7 @@ export default function LandingPage() {
 
         {/* Overview */}
         <section className="mx-auto mt-24 max-w-3xl md:mt-32">
-          <h2 className="mb-6 font-heading text-3xl font-extrabold text-primary md:text-4xl">
+          <h2 className="mb-6 font-heading text-3xl font-black text-primary md:text-4xl">
             Overview
           </h2>
           <p className="text-lg leading-relaxed text-secondary">
@@ -80,7 +80,7 @@ export default function LandingPage() {
 
         {/* Purpose */}
         <section className="mx-auto mt-20 max-w-3xl">
-          <h2 className="mb-6 font-heading text-3xl font-extrabold text-primary md:text-4xl">
+          <h2 className="mb-6 font-heading text-3xl font-black text-primary md:text-4xl">
             Purpose
           </h2>
           <p className="text-lg leading-relaxed text-secondary">
@@ -90,7 +90,7 @@ export default function LandingPage() {
 
         {/* Artistic Vision */}
         <section className="mx-auto mt-20 max-w-3xl">
-          <h2 className="mb-6 font-heading text-3xl font-extrabold text-primary md:text-4xl">
+          <h2 className="mb-6 font-heading text-3xl font-black text-primary md:text-4xl">
             Artistic Vision
           </h2>
           <p className="text-lg leading-relaxed text-secondary">
@@ -100,17 +100,17 @@ export default function LandingPage() {
 
         {/* The Concept — Year 1-5 timeline */}
         <section className="mx-auto mt-20 max-w-4xl">
-          <h2 className="mb-10 text-center font-heading text-3xl font-extrabold text-primary md:text-4xl">
+          <h2 className="mb-10 text-center font-heading text-3xl font-black text-primary md:text-4xl">
             The Concept
           </h2>
           <div className="flex flex-col gap-6">
             {LANDING_COPY.concept.map((phase) => (
               <div key={phase.year} className="card rounded-lg p-6 md:p-8">
                 <div className="mb-2 flex items-center gap-3">
-                  <span className="rounded-full bg-accent px-3 py-1 text-xs font-bold uppercase tracking-widest text-accent-contrast">
+                  <span className="label-sono font-medium rounded-full bg-accent px-3 py-1 text-accent-contrast">
                     {phase.year}
                   </span>
-                  <h3 className="font-heading text-xl font-bold text-primary md:text-2xl">
+                  <h3 className="font-heading text-xl font-black text-primary md:text-2xl">
                     {phase.title}
                   </h3>
                 </div>

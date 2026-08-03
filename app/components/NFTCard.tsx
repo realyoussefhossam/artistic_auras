@@ -64,7 +64,7 @@ export function NFTCard({
       <div className="flex flex-grow flex-col justify-between bg-surface p-4">
         <div className="flex items-start justify-between">
           <div className="flex flex-col">
-            <h3 className="font-heading text-lg font-bold text-primary">{name}</h3>
+            <h3 className="font-heading text-lg font-black text-primary">{name}</h3>
             <span className="text-xs text-muted">
               Aura #{paddedId}
             </span>

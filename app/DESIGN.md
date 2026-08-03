@@ -64,15 +64,17 @@ Originals in `stitch/{mint,landing,gallery,shader}/`.
 
 ## Typography
 
+Type family: Neue Haas Grotesk Display Pro (Medium 500 + Black 900, self-hosted) for all sans/heading text, per samspratt.com typography. Mono labels use Sono. Only 500/900 faces are loaded — no synthesized weights; `font-semibold` maps to 500.
+
 | Role | Font | Size | Weight | Line Height |
 |---|---|---|---|---|
-| Display LG | Space Grotesk | 72px | 700 | 1.1 (letterSpacing -0.02em) |
-| Headline LG | Space Grotesk | 48px | 700 | 1.2 |
-| Headline MD | Space Grotesk | 32px | 600 | 1.3 |
-| Headline LG Mobile | Space Grotesk | 32px | 700 | 1.2 |
-| Body LG | Inter | 18px | 400 | 1.6 |
-| Body MD | Inter | 16px | 400 | 1.6 |
-| Label SM | JetBrains Mono | 12px | 500 | 1.0 (letterSpacing 0.05em) |
+| Display LG | Neue Haas Grotesk Display Pro | 72px | 900 | 1.1 (letterSpacing -0.02em) |
+| Headline LG | Neue Haas Grotesk Display Pro | 48px | 900 | 1.2 |
+| Headline MD | Neue Haas Grotesk Display Pro | 32px | 900 | 1.3 |
+| Headline LG Mobile | Neue Haas Grotesk Display Pro | 32px | 900 | 1.2 |
+| Body LG | Neue Haas Grotesk Display Pro | 18px | 500 | 1.6 |
+| Body MD | Neue Haas Grotesk Display Pro | 16px | 500 | 1.6 |
+| Label SM | Sono | 12px | 500 | 1.0 (letterSpacing 0.12em, uppercase) |
 
 ## Spacing
 

@@ -5,7 +5,7 @@ export function Footer() {
     <footer className="mt-auto w-full border-t border-border-default bg-surface py-12">
       <div className="mx-auto flex max-w-[1440px] flex-col items-center justify-between gap-6 px-5 md:flex-row md:px-16">
         <div className="flex flex-col items-center gap-2 md:items-start">
-          <div className="font-heading text-2xl font-bold text-primary">
+          <div className="font-heading text-2xl font-black text-primary">
             Artistic Auras
           </div>
           <p className="text-xs text-muted">

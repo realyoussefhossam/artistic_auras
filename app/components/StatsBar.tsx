@@ -30,7 +30,7 @@ export function StatsBar({
             <span className="mb-2 text-xs uppercase tracking-widest text-muted">
               {stat.label}
             </span>
-            <span className="font-heading text-2xl font-bold text-primary">
+            <span className="font-heading text-2xl font-black text-primary">
               {stat.value}
             </span>
           </div>

@@ -4,10 +4,13 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  /* Fonts — single family (Geist) per valerio-lorenzo-DESIGN.md */
-  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
-  --font-heading: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist), ui-monospace, monospace;
+  /* Fonts — Neue Haas Grotesk Display Pro (500/900) + Sono mono, per samspratt.com typography */
+  --font-sans: var(--font-nhg), Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-nhg), Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-sono), "IBM Plex Mono", ui-monospace, monospace;
+
+  /* Only 500 (Medium) and 900 (Black) faces exist — keep semibold from synthesizing */
+  --font-weight-semibold: 500;
 
   /* Semantic surfaces & text — mapped to per-theme CSS vars below */
   --color-canvas: var(--canvas);
@@ -90,6 +93,14 @@
     border-radius: var(--radius-card);
     box-shadow: var(--shadow-card);
     overflow: hidden;
+  }
+
+  /* Sono tracked label — samspratt.com label convention (uppercase, 0.12em tracking) */
+  .label-sono {
+    font-family: var(--font-sono), "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
   }
 
   /* Fixed header bar */

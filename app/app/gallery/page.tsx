@@ -131,7 +131,7 @@ export default function GalleryPage() {
         <aside className="w-full md:w-64 flex-shrink-0 md:sticky md:top-32 md:self-start">
           <div className="card rounded-lg p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="font-heading text-2xl font-bold text-primary">Filters</h2>
+              <h2 className="font-heading text-2xl font-black text-primary">Filters</h2>
               {hasFilters && (
                 <button
                   onClick={clearFilters}
@@ -220,7 +220,7 @@ export default function GalleryPage() {
 
         {/* Gallery Grid */}
         <section className="flex-grow">
-          <h1 className="mb-8 font-heading text-4xl font-extrabold text-primary md:text-6xl">
+          <h1 className="mb-8 font-heading text-4xl font-black text-primary md:text-6xl">
             The Gallery
           </h1>
           {isLoading && mintedCount > 0 && (

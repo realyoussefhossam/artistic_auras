@@ -59,7 +59,7 @@ export function ArtworkCarousel() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-full p-3">
-              <span className="text-xs font-bold text-white">
+              <span className="text-xs font-medium text-white">
                 {nft.name}
               </span>
             </div>

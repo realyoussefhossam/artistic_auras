@@ -21,7 +21,7 @@ export function Header() {
       <div className="mx-auto flex max-w-[1440px] items-center justify-between px-5 py-4 md:px-16">
         <Link
           href="/"
-          className="flex items-center gap-2 font-heading text-2xl font-bold tracking-tight text-on-header transition-opacity hover:opacity-80"
+          className="flex items-center gap-2 font-heading text-2xl font-black tracking-tight text-on-header transition-opacity hover:opacity-80"
         >
           <Sparkles className="size-6" />
           Artistic Auras

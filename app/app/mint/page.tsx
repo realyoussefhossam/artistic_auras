@@ -61,7 +61,7 @@ export default function MintPage() {
                     <p className="mb-1 text-xs uppercase tracking-wider text-accent">
                       Next to Mint
                     </p>
-                    <h2 className="font-heading text-2xl font-bold text-primary">
+                    <h2 className="font-heading text-2xl font-black text-primary">
                       Genesis Aura #
                       {nextTokenId !== null
                         ? String(nextTokenId).padStart(3, "0")
@@ -72,7 +72,7 @@ export default function MintPage() {
                     <p className="mb-1 text-xs text-muted">
                       Current Mint
                     </p>
-                    <p className="font-heading text-2xl font-bold text-primary">
+                    <p className="font-heading text-2xl font-black text-primary">
                       {priceDisplay}
                     </p>
                   </div>
@@ -83,7 +83,7 @@ export default function MintPage() {
             {/* Mint Interface */}
             <div className="flex flex-col justify-center">
               <div className="card rounded-lg p-8 md:p-12">
-                <h1 className="mb-6 font-heading text-3xl font-extrabold text-primary md:text-4xl">
+                <h1 className="mb-6 font-heading text-3xl font-black text-primary md:text-4xl">
                   Mint Your Aura
                 </h1>
                 <p className="mb-10 text-base text-secondary">
