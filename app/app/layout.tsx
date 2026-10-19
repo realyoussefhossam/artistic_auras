@@ -28,9 +28,25 @@ const sono = Sono({
 });
 
 export const metadata: Metadata = {
-  title: "Artistic Auras",
+  metadataBase: new URL("https://valeriolorenzo.app"),
+  title: "Valerio Lorenzo — Artistic Auras",
   description:
-    "A 21-piece abstract NFT collection capturing cosmic energy and vibrant expressionism on Ethereum.",
+    "Artistic Auras — a 21-piece abstract NFT collection by digital artist Valerio Lorenzo.",
+  authors: [{ name: "Valerio Lorenzo" }],
+  openGraph: {
+    title: "Valerio Lorenzo — Artistic Auras",
+    description:
+      "Artistic Auras — a 21-piece abstract NFT collection by digital artist Valerio Lorenzo.",
+    url: "https://valeriolorenzo.app",
+    siteName: "Valerio Lorenzo",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Valerio Lorenzo — Artistic Auras",
+    description:
+      "Artistic Auras — a 21-piece abstract NFT collection by digital artist Valerio Lorenzo.",
+  },
 };
 
 export default function RootLayout({

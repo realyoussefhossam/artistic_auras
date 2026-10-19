@@ -1,13 +1,16 @@
 import Image from "next/image";
 
+import { BrandLogo } from "@/components/BrandLogo";
+
 export function Footer() {
   return (
     <footer className="mt-auto w-full border-t border-border-default bg-surface py-12">
       <div className="mx-auto flex max-w-[1440px] flex-col items-center justify-between gap-6 px-5 md:flex-row md:px-16">
         <div className="flex flex-col items-center gap-2 md:items-start">
-          <div className="font-heading text-2xl font-medium text-primary">
-            Artistic Auras
-          </div>
+          <BrandLogo
+            markClassName="h-16"
+            nameClassName="text-sm tracking-[0.05em] text-primary"
+          />
           <p className="text-xs text-muted">
             © 2026 Artistic Auras. All rights reserved.
           </p>

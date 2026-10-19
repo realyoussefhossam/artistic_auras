@@ -1,9 +1,10 @@
 "use client";
 
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Sparkles } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
+import { BrandLogo } from "@/components/BrandLogo";
 
 const navLinks = [
   { label: "Landing", href: "/" },
@@ -17,14 +18,14 @@ export function Header() {
 
   return (
     <nav className="header-bar fixed top-0 z-50 w-full">
-      <div className="mx-auto flex max-w-[1440px] items-center justify-between px-5 py-4 md:px-16">
-        <Link
-          href="/"
-          className="flex items-center gap-2 font-heading text-2xl font-medium tracking-tight text-on-header transition-opacity hover:opacity-80"
-        >
-          <Sparkles className="size-6" />
-          Artistic Auras
-        </Link>
+      <div className="mx-auto flex max-w-[1440px] items-center justify-between px-5 py-2 md:px-16">
+        <BrandLogo
+          inverted
+          priority
+          markClassName="h-10"
+          nameClassName="text-[11px] tracking-[0.06em] text-on-header"
+          className="text-on-header"
+        />
 
         <ul className="hidden items-center gap-8 md:flex">
           {navLinks.map((link) => {
