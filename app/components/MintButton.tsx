@@ -136,7 +136,7 @@ export function MintButton({ onSuccess }: MintButtonProps) {
         <span className="text-xs uppercase tracking-widest text-muted">
           Total Cost
         </span>
-        <span className="font-heading text-xl font-black text-accent">
+        <span className="font-heading text-xl font-medium text-accent">
           {totalCostDisplay} ETH
         </span>
       </div>

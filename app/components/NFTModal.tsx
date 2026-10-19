@@ -172,7 +172,7 @@ export function NFTModal({
               <span className="text-xs uppercase tracking-widest text-muted">
                 Aura #{paddedId}
               </span>
-              <DialogTitle className="font-heading text-2xl font-black text-primary">
+              <DialogTitle className="font-heading text-2xl font-medium text-primary">
                 {nft.name}
               </DialogTitle>
             </DialogHeader>

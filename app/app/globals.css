@@ -58,11 +58,26 @@
     background-color: var(--canvas);
     color: var(--text);
     font-family: var(--font-sans);
+    /* NHG 65Md is the "regular" face — samspratt.com resolves 400 to 500 too,
+       but set it explicitly so no fallback/synthetic weight is ever used. */
+    font-weight: 500;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
   html {
     font-family: var(--font-sans);
+  }
+  /* Headlines and regular text use the same NHG face as samspratt.com/1/iii:
+     Neue Haas Grotesk Display Pro Medium (500) with tight tracking. */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    font-weight: 500;
+    letter-spacing: -0.025em;
   }
 }
 
