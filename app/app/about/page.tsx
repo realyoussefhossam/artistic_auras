@@ -84,11 +84,11 @@ export default function AboutPage() {
             out directly.
           </p>
           <a
-            href="mailto:valerio@artisticauras.com"
+            href="mailto:valerio@valeriolorenzo.app"
             className="btn-accent mt-8 inline-flex items-center gap-2 rounded-lg px-8 py-3 font-heading text-lg font-medium"
           >
             <Mail className="size-5" />
-            valerio@artisticauras.com
+            valerio@valeriolorenzo.app
           </a>
         </section>
       </main>
